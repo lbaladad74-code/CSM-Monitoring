@@ -35,7 +35,6 @@
         label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 12px; text-transform: uppercase; color: #475569;}
         input, select, textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 4px; box-sizing: border-box; font-size: 14px;}
         input[readonly] { background-color: #e2e8f0; color: #64748b; cursor: not-allowed; font-weight: bold;}
-        select optgroup { font-weight: bold; color: var(--primary); background-color: #f1f5f9;}
         
         button { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px;}
         button:hover { background: #2563eb; }
@@ -99,24 +98,14 @@
                     <h3>2. Transaction Details</h3>
                     <div class="grid-2">
                         <div><label>Section / Unit</label>
-                            <select id="sectionUnit" required>
+                            <select id="sectionUnit" onchange="updateServiceDropdown()" required>
                                 <option value="">Select Unit...</option>
-                                <option value="Office of the Regional Director">Office of the Regional Director</option>
-                                <option value="Office of the Assistant Regional Director">Office of the Assistant Regional Director</option>
-                                <option value="Administrative Division">Administrative Division</option>
-                                <option value="Curriculum and Learning Management Division">Curriculum and Learning Management</option>
-                                <option value="Education Support Services Division">Education Support Services</option>
-                                <option value="Finance Division">Finance Division</option>
-                                <option value="Field Technical Assistance Division">Field Technical Assistance</option>
-                                <option value="Human Resource Development Division">Human Resource Development</option>
-                                <option value="Policy, Planning and Research Division">Policy, Planning and Research</option>
-                                <option value="Quality Assurance Division">Quality Assurance</option>
-                            </select>
+                                </select>
                         </div>
                         <div><label>Service Availed as per CC</label>
                             <select id="serviceCC" onchange="updateRefCode()" required>
-                                <option value="">Select Service...</option>
-                            </select>
+                                <option value="">Select Unit First...</option>
+                                </select>
                         </div>
                         <div><label>Ref Code</label><input type="text" id="refCode" readonly required></div>
                         <div><label>Actual Service Availed</label><input type="text" id="actualService" required></div>
@@ -216,30 +205,47 @@
             { group: "15.0 Quality Assurance Division", items: [{ ref: "15.1", name: "Application for Opening/Additional Offering of SHS Program for Private Schools" }, { ref: "15.2", name: "Application for Tuition and Other School Fees (TOSF), No Increase, and Proposed New Fees of Private Schools" }, { ref: "15.3", name: "Issuance of Special Orders for the Graduation of Private School Learners" }, { ref: "15.4", name: "Application for Establishment, Merging, Conversion, and Naming/Renaming of Public Schools and Separation of Public Schools" }, { ref: "15.5", name: "Application of Government Permit to Operate" }, { ref: "15.6", name: "Application for Renewal of Government Permit to Operate" }, { ref: "15.7", name: "Application for Government Recognition" }, { ref: "15.8", name: "Other Transactions" }] }
         ];
 
-        // This populates the dropdown automatically on load
+        // 1. POPULATE SECTION DROPDOWN ON LOAD
         window.onload = function() {
-            const selectElement = document.getElementById('serviceCC');
+            const sectionSelect = document.getElementById('sectionUnit');
             servicesData.forEach(group => {
-                const optgroup = document.createElement('optgroup');
-                optgroup.label = group.group;
-                group.items.forEach(item => {
-                    const option = document.createElement('option');
-                    // We combine Ref and Name so we can extract BOTH later to prevent collisions
-                    option.value = `${item.ref}|||${item.name}`;
-                    option.textContent = item.name;
-                    optgroup.appendChild(option);
-                });
-                selectElement.appendChild(optgroup);
+                const option = document.createElement('option');
+                option.value = group.group;
+                option.textContent = group.group;
+                sectionSelect.appendChild(option);
             });
         };
 
-        // Automatic Ref Code assigner
+        // 2. CASCADING DROPDOWN LOGIC: Update Services when Section changes
+        window.updateServiceDropdown = function() {
+            const sectionValue = document.getElementById('sectionUnit').value;
+            const serviceSelect = document.getElementById('serviceCC');
+            const refInput = document.getElementById('refCode');
+
+            // Reset the Service dropdown and Ref code
+            serviceSelect.innerHTML = '<option value="">Select Service...</option>';
+            refInput.value = "";
+
+            if (sectionValue) {
+                // Find the matching group from our database
+                const selectedGroup = servicesData.find(g => g.group === sectionValue);
+                if (selectedGroup) {
+                    selectedGroup.items.forEach(item => {
+                        const option = document.createElement('option');
+                        option.value = `${item.ref}|||${item.name}`; // Store Ref + Name securely
+                        option.textContent = item.name;
+                        serviceSelect.appendChild(option);
+                    });
+                }
+            }
+        };
+
+        // 3. AUTO REF CODE GENERATOR
         window.updateRefCode = function() {
             const select = document.getElementById('serviceCC');
             const refInput = document.getElementById('refCode');
             if (select.value) {
-                // Split the combination to only show the Ref Code in the box
-                refInput.value = select.value.split('|||')[0];
+                refInput.value = select.value.split('|||')[0]; // Extract just the Ref code
             } else {
                 refInput.value = "";
             }
@@ -306,13 +312,12 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // --- SUBMIT DATA ---
+        // --- SUBMIT DATA WITH HARD RESET ---
         document.getElementById('csmForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const sqdValues = {};
             for(let i=0; i<=8; i++) sqdValues[`sqd${i}`] = document.getElementById(`sqd${i}`).value;
 
-            // Extract the pure Service Name from the combined value
             const serviceCombined = document.getElementById('serviceCC').value;
             const cleanServiceName = serviceCombined ? serviceCombined.split('|||')[1] : "";
 
@@ -326,7 +331,7 @@
                     age: document.getElementById('age').value,
                     region: document.getElementById('region').value,
                     sectionUnit: document.getElementById('sectionUnit').value,
-                    serviceCC: cleanServiceName, // <--- Saving the clean text to Firebase
+                    serviceCC: cleanServiceName, 
                     refCode: document.getElementById('refCode').value,
                     actualService: document.getElementById('actualService').value,
                     cc: { cc1: document.getElementById('cc1').value, cc2: document.getElementById('cc2').value, cc3: document.getElementById('cc3').value },
@@ -334,22 +339,27 @@
                     remarks: document.getElementById('remarks').value,
                     timestamp: new Date()
                 });
+                
                 alert("Record Saved Successfully!");
+                
+                // 1. Reset text inputs and basic dropdowns
                 document.getElementById('csmForm').reset();
+                
+                // 2. Reset the dynamic cascading dropdowns safely
+                document.getElementById('serviceCC').innerHTML = '<option value="">Select Unit First...</option>';
                 document.getElementById('refCode').value = "";
+                
+                // 3. Reset the date to today
                 document.getElementById('date').valueAsDate = new Date();
+                
             } catch (error) { console.error(error); }
         });
 
         // --- REAL-TIME DATA PROCESSING ---
-        const sqdScoreMap = {
-            "STRONGLY AGREE": 5, "AGREE": 4, "NEITHER AGREE OR DISAGREE": 3, 
-            "DISAGREE": 2, "STRONGLY DISAGREE": 1
-        };
+        const sqdScoreMap = { "STRONGLY AGREE": 5, "AGREE": 4, "NEITHER AGREE OR DISAGREE": 3, "DISAGREE": 2, "STRONGLY DISAGREE": 1 };
 
         function buildTallyRow(data) {
             let r = `<td>${data.refCode}</td><td>${data.serviceCC}</td>`;
-
             r += `<td>${data.clientType==='Citizen'?'1':''}</td><td>${data.clientType==='Government'?'1':''}</td><td>${data.clientType==='Business'?'1':''}</td><td>${data.clientType==='Did Not Specify'?'1':''}</td>`;
             r += `<td>${data.sex==='Male'?'1':''}</td><td>${data.sex==='Female'?'1':''}</td><td>${data.sex==='Did not Specify'?'1':''}</td>`;
             r += `<td>${data.age==='19 or Lower'?'1':''}</td><td>${data.age==='20-34'?'1':''}</td><td>${data.age==='35-49'?'1':''}</td><td>${data.age==='50-64'?'1':''}</td><td>${data.age==='65 or higher'?'1':''}</td><td>${data.age==='DID NOT SPECIFY'?'1':''}</td>`;
@@ -364,7 +374,6 @@
                 let s = data.sqd[`sqd${i}`];
                 r += `<td>${s==='STRONGLY AGREE'?'1':''}</td><td>${s==='AGREE'?'1':''}</td><td>${s==='NEITHER AGREE OR DISAGREE'?'1':''}</td><td>${s==='DISAGREE'?'1':''}</td><td>${s==='STRONGLY DISAGREE'?'1':''}</td><td>${s==='N/A'?'1':''}</td>`;
             }
-
             return `<tr>${r}</tr>`;
         }
 
@@ -377,14 +386,10 @@
             
             snapshot.forEach((doc) => {
                 const data = doc.data();
-                
                 let total = 0, valid = 0;
                 for(let i=1; i<=8; i++) {
                     let val = data.sqd[`sqd${i}`];
-                    if(val !== "N/A" && sqdScoreMap[val]) { 
-                        total += sqdScoreMap[val]; 
-                        valid++; 
-                    }
+                    if(val !== "N/A" && sqdScoreMap[val]) { total += sqdScoreMap[val]; valid++; }
                 }
                 let avg = valid > 0 ? (total / valid).toFixed(2) : "N/A";
 
@@ -393,15 +398,11 @@
                 basicRow.innerHTML = `<td>${badge}</td><td>${data.date}</td><td>${data.controlNo}</td><td>${data.clientType}</td><td>${data.sectionUnit}</td><td><strong>${data.refCode}</strong></td><td style="color:#16a34a;font-weight:bold;">${avg}</td><td>${data.remarks || "-"}</td>`;
                 masterBody.appendChild(basicRow);
 
-                const tallyRowHTML = buildTallyRow(data);
                 const tallyRow = document.createElement("tr");
-                tallyRow.innerHTML = tallyRowHTML;
+                tallyRow.innerHTML = buildTallyRow(data);
                 
-                if (data.source === "Onsite") {
-                    onsiteTally.appendChild(tallyRow);
-                } else if (data.source === "Online") {
-                    onlineTally.appendChild(tallyRow);
-                }
+                if (data.source === "Onsite") onsiteTally.appendChild(tallyRow);
+                else if (data.source === "Online") onlineTally.appendChild(tallyRow);
             });
         });
         
