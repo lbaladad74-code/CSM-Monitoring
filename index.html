@@ -35,6 +35,7 @@
         label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 12px; text-transform: uppercase; color: #475569;}
         input, select, textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 4px; box-sizing: border-box; font-size: 14px;}
         input[readonly] { background-color: #e2e8f0; color: #64748b; cursor: not-allowed; font-weight: bold;}
+        select optgroup { font-weight: bold; color: var(--primary); background-color: #f1f5f9;}
         
         button { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px;}
         button:hover { background: #2563eb; }
@@ -54,6 +55,11 @@
         .mega-table td { font-weight: bold; color: #0f172a; }
         .bg-yellow { background-color: #fef08a !important; font-weight: bold; }
         .bg-green { background-color: #bbf7d0 !important; font-weight: bold; color: #0f172a; }
+
+        /* Report Specific Styles */
+        .metric-card { text-align: center; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .metric-card h3 { font-size: 14px; color: #64748b; margin-top: 0; border: none; padding: 0;}
+        .metric-card h2 { font-size: 36px; margin: 10px 0; color: #0f172a; }
     </style>
 </head>
 <body>
@@ -100,12 +106,12 @@
                         <div><label>Section / Unit</label>
                             <select id="sectionUnit" onchange="updateServiceDropdown()" required>
                                 <option value="">Select Unit...</option>
-                                </select>
+                            </select>
                         </div>
                         <div><label>Service Availed as per CC</label>
                             <select id="serviceCC" onchange="updateRefCode()" required>
                                 <option value="">Select Unit First...</option>
-                                </select>
+                            </select>
                         </div>
                         <div><label>Ref Code</label><input type="text" id="refCode" readonly required></div>
                         <div><label>Actual Service Availed</label><input type="text" id="actualService" required></div>
@@ -167,7 +173,60 @@
             <div class="card mega-table-wrapper" id="onlineTableContainer"></div>
         </div>
 
-        <div id="report" class="view-section"><h1>Report</h1><div class="card"><p>Analytics and generation.</p></div></div>
+        <div id="report" class="view-section">
+            <h1>Analytics & Reporting</h1>
+            
+            <div class="card" style="background-color: #e2e8f0;">
+                <label>Total Transactions in 2024 (Needed to calculate Response Rate)</label>
+                <div style="display: flex; gap: 10px; max-width: 300px;">
+                    <input type="number" id="totalTransactionsInput" value="100">
+                </div>
+            </div>
+
+            <div class="grid-4">
+                <div class="metric-card" style="border-top: 4px solid var(--primary);">
+                    <h3>Response Rate</h3>
+                    <h2 id="repResponseRate">0%</h2>
+                </div>
+                <div class="metric-card" style="border-top: 4px solid #10b981;">
+                    <h3>Overall SQD Score</h3>
+                    <h2 id="repOverallScore">0%</h2>
+                    <p id="repInterpretation" style="font-weight:bold; color: #10b981; margin: 0;">-</p>
+                </div>
+                <div class="metric-card" style="border-top: 4px solid #f59e0b;">
+                    <h3>CC Awareness</h3>
+                    <h2 id="repCcAwareness">0%</h2>
+                </div>
+                <div class="metric-card" style="border-top: 4px solid #8b5cf6;">
+                    <h3>CC Helpfulness</h3>
+                    <h2 id="repCcHelpfulness">0%</h2>
+                </div>
+            </div>
+
+            <div class="card table-wrapper">
+                <h3>Service Quality Dimensions (SQD) Breakdown</h3>
+                <p style="font-size: 12px; margin-top: -10px; color: #64748b;">
+                    Formula: (Strongly Agree + Agree) / (Total Respondents - N/A) x 100
+                </p>
+                <table class="basic-table">
+                    <thead>
+                        <tr>
+                            <th>Dimension</th>
+                            <th style="text-align: center;">Strongly Agree</th>
+                            <th style="text-align: center;">Agree</th>
+                            <th style="text-align: center;">Neither</th>
+                            <th style="text-align: center;">Disagree</th>
+                            <th style="text-align: center;">Strongly Disagree</th>
+                            <th style="text-align: center;">N/A</th>
+                            <th style="text-align: center; background: #f1f5f9;">Score (%)</th>
+                            <th style="text-align: center; background: #f1f5f9;">Interpretation</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sqdReportBody"></tbody>
+                </table>
+            </div>
+        </div>
+
         <div id="good-comments" class="view-section"><h1>Good Comments</h1><div class="card"><p>Positive feedback.</p></div></div>
     </main>
 
@@ -205,7 +264,6 @@
             { group: "15.0 Quality Assurance Division", items: [{ ref: "15.1", name: "Application for Opening/Additional Offering of SHS Program for Private Schools" }, { ref: "15.2", name: "Application for Tuition and Other School Fees (TOSF), No Increase, and Proposed New Fees of Private Schools" }, { ref: "15.3", name: "Issuance of Special Orders for the Graduation of Private School Learners" }, { ref: "15.4", name: "Application for Establishment, Merging, Conversion, and Naming/Renaming of Public Schools and Separation of Public Schools" }, { ref: "15.5", name: "Application of Government Permit to Operate" }, { ref: "15.6", name: "Application for Renewal of Government Permit to Operate" }, { ref: "15.7", name: "Application for Government Recognition" }, { ref: "15.8", name: "Other Transactions" }] }
         ];
 
-        // 1. POPULATE SECTION DROPDOWN ON LOAD
         window.onload = function() {
             const sectionSelect = document.getElementById('sectionUnit');
             servicesData.forEach(group => {
@@ -216,23 +274,18 @@
             });
         };
 
-        // 2. CASCADING DROPDOWN LOGIC: Update Services when Section changes
         window.updateServiceDropdown = function() {
             const sectionValue = document.getElementById('sectionUnit').value;
             const serviceSelect = document.getElementById('serviceCC');
             const refInput = document.getElementById('refCode');
-
-            // Reset the Service dropdown and Ref code
             serviceSelect.innerHTML = '<option value="">Select Service...</option>';
             refInput.value = "";
-
             if (sectionValue) {
-                // Find the matching group from our database
                 const selectedGroup = servicesData.find(g => g.group === sectionValue);
                 if (selectedGroup) {
                     selectedGroup.items.forEach(item => {
                         const option = document.createElement('option');
-                        option.value = `${item.ref}|||${item.name}`; // Store Ref + Name securely
+                        option.value = `${item.ref}|||${item.name}`; 
                         option.textContent = item.name;
                         serviceSelect.appendChild(option);
                     });
@@ -240,56 +293,22 @@
             }
         };
 
-        // 3. AUTO REF CODE GENERATOR
         window.updateRefCode = function() {
             const select = document.getElementById('serviceCC');
             const refInput = document.getElementById('refCode');
-            if (select.value) {
-                refInput.value = select.value.split('|||')[0]; // Extract just the Ref code
-            } else {
-                refInput.value = "";
-            }
+            if (select.value) refInput.value = select.value.split('|||')[0]; 
+            else refInput.value = "";
         };
 
         // --- MEGA TABLE GENERATOR ---
         function generateMegaTableHTML(tbodyId) {
-            let sqdHeaders = '';
-            let sqdSubHeaders = '';
+            let sqdHeaders = ''; let sqdSubHeaders = '';
             const sqdNames = ["SQD0", "SQD1 (RESPONSIVENESS)", "SQD2 (RELIABILITY)", "SQD3 (ACCESS AND FACILITIES)", "SQD4 (COMMUNICATION)", "SQD5 (COSTS)", "SQD6 (INTEGRITY)", "SQD7 (ASSURANCE)", "SQD8 (OUTCOME)"];
-            
             sqdNames.forEach(name => {
                 sqdHeaders += `<th colspan="6" class="bg-green">${name}</th>`;
                 sqdSubHeaders += `<th class="bg-green">STRONGLY AGREE</th><th class="bg-green">AGREE</th><th class="bg-green">NEITHER AGREE OR DISAGREE</th><th class="bg-green">DISAGREE</th><th class="bg-green">STRONGLY DISAGREE</th><th class="bg-green">N/A</th>`;
             });
-
-            return `
-                <table class="mega-table">
-                    <thead>
-                        <tr>
-                            <th rowspan="3" class="bg-yellow">Ref Code</th>
-                            <th rowspan="3" class="bg-yellow">Service availed as per Citizen's Charter</th>
-                            <th colspan="4" class="bg-green">CLIENT TYPE</th>
-                            <th colspan="3" class="bg-green">SEX</th>
-                            <th colspan="6" class="bg-green">AGE</th>
-                            <th rowspan="3" class="bg-green">REGION OF RESIDENCE</th>
-                            <th colspan="13" class="bg-green">CITIZEN'S CHARTER</th>
-                            ${sqdHeaders}
-                        </tr>
-                        <tr>
-                            <th rowspan="2" class="bg-green">CITIZEN</th><th rowspan="2" class="bg-green">GOVERNMENT</th><th rowspan="2" class="bg-green">BUSINESS</th><th rowspan="2" class="bg-green">DID NOT SPECIFY</th>
-                            <th rowspan="2" class="bg-green">MALE</th><th rowspan="2" class="bg-green">FEMALE</th><th rowspan="2" class="bg-green">DID NOT SPECIFY</th>
-                            <th rowspan="2" class="bg-green">19 or Lower</th><th rowspan="2" class="bg-green">20-34</th><th rowspan="2" class="bg-green">35-49</th><th rowspan="2" class="bg-green">50-64</th><th rowspan="2" class="bg-green">65 or higher</th><th rowspan="2" class="bg-green">DID NOT SPECIFY</th>
-                            <th colspan="4" class="bg-green">CC1</th><th colspan="5" class="bg-green">CC2</th><th colspan="4" class="bg-green">CC3</th>
-                        </tr>
-                        <tr>
-                            <th class="bg-green">1</th><th class="bg-green">2</th><th class="bg-green">3</th><th class="bg-green">4</th>
-                            <th class="bg-green">1</th><th class="bg-green">2</th><th class="bg-green">3</th><th class="bg-green">4</th><th class="bg-green">5</th>
-                            <th class="bg-green">1</th><th class="bg-green">2</th><th class="bg-green">3</th><th class="bg-green">4</th>
-                            ${sqdSubHeaders}
-                        </tr>
-                    </thead>
-                    <tbody id="${tbodyId}"></tbody>
-                </table>`;
+            return `<table class="mega-table"><thead><tr><th rowspan="3" class="bg-yellow">Ref Code</th><th rowspan="3" class="bg-yellow">Service availed as per Citizen's Charter</th><th colspan="4" class="bg-green">CLIENT TYPE</th><th colspan="3" class="bg-green">SEX</th><th colspan="6" class="bg-green">AGE</th><th rowspan="3" class="bg-green">REGION OF RESIDENCE</th><th colspan="13" class="bg-green">CITIZEN'S CHARTER</th>${sqdHeaders}</tr><tr><th rowspan="2" class="bg-green">CITIZEN</th><th rowspan="2" class="bg-green">GOVERNMENT</th><th rowspan="2" class="bg-green">BUSINESS</th><th rowspan="2" class="bg-green">DID NOT SPECIFY</th><th rowspan="2" class="bg-green">MALE</th><th rowspan="2" class="bg-green">FEMALE</th><th rowspan="2" class="bg-green">DID NOT SPECIFY</th><th rowspan="2" class="bg-green">19 or Lower</th><th rowspan="2" class="bg-green">20-34</th><th rowspan="2" class="bg-green">35-49</th><th rowspan="2" class="bg-green">50-64</th><th rowspan="2" class="bg-green">65 or higher</th><th rowspan="2" class="bg-green">DID NOT SPECIFY</th><th colspan="4" class="bg-green">CC1</th><th colspan="5" class="bg-green">CC2</th><th colspan="4" class="bg-green">CC3</th></tr><tr><th class="bg-green">1</th><th class="bg-green">2</th><th class="bg-green">3</th><th class="bg-green">4</th><th class="bg-green">1</th><th class="bg-green">2</th><th class="bg-green">3</th><th class="bg-green">4</th><th class="bg-green">5</th><th class="bg-green">1</th><th class="bg-green">2</th><th class="bg-green">3</th><th class="bg-green">4</th>${sqdSubHeaders}</tr></thead><tbody id="${tbodyId}"></tbody></table>`;
         }
 
         document.getElementById('onsiteTableContainer').innerHTML = generateMegaTableHTML('onsiteTallyBody');
@@ -312,7 +331,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // --- SUBMIT DATA WITH HARD RESET ---
+        // --- SUBMIT DATA ---
         document.getElementById('csmForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const sqdValues = {};
@@ -339,24 +358,101 @@
                     remarks: document.getElementById('remarks').value,
                     timestamp: new Date()
                 });
-                
                 alert("Record Saved Successfully!");
-                
-                // 1. Reset text inputs and basic dropdowns
                 document.getElementById('csmForm').reset();
-                
-                // 2. Reset the dynamic cascading dropdowns safely
                 document.getElementById('serviceCC').innerHTML = '<option value="">Select Unit First...</option>';
                 document.getElementById('refCode').value = "";
-                
-                // 3. Reset the date to today
                 document.getElementById('date').valueAsDate = new Date();
-                
             } catch (error) { console.error(error); }
         });
 
-        // --- REAL-TIME DATA PROCESSING ---
+        // --- GLOBAL DATA STORAGE FOR REPORTING ---
+        let globalCsmData = [];
+
+        // --- REAL-TIME DATA PROCESSING & REPORT GENERATION ---
         const sqdScoreMap = { "STRONGLY AGREE": 5, "AGREE": 4, "NEITHER AGREE OR DISAGREE": 3, "DISAGREE": 2, "STRONGLY DISAGREE": 1 };
+
+        function getInterpretation(score) {
+            if (score >= 95.0) return "Outstanding";
+            if (score >= 90.0) return "Very Satisfactory";
+            if (score >= 80.0) return "Satisfactory";
+            if (score >= 60.0) return "Fair";
+            return "Poor";
+        }
+
+        window.generateReport = function() {
+            const totalResp = globalCsmData.length;
+            const totalTrans = parseInt(document.getElementById('totalTransactionsInput').value) || totalResp;
+
+            // 1. Response Rate
+            const responseRate = totalTrans > 0 ? ((totalResp / totalTrans) * 100).toFixed(2) : 0;
+            document.getElementById('repResponseRate').innerText = `${responseRate}%`;
+
+            if (totalResp === 0) return;
+
+            // Counters
+            let ccAwareCount = 0;
+            let ccHelpfulCount = 0;
+            const sqdCounts = {};
+            for(let i=1; i<=8; i++) sqdCounts[i] = { SA:0, A:0, N:0, D:0, SD:0, NA:0 };
+            
+            let totalOverallSA_A = 0;
+            let totalOverallValidResp = 0;
+
+            globalCsmData.forEach(data => {
+                // CC Logic
+                if (['1','2','3'].includes(data.cc.cc1)) ccAwareCount++;
+                if (data.cc.cc3 === '1') ccHelpfulCount++;
+
+                // SQD Logic
+                for(let i=1; i<=8; i++) {
+                    const val = data.sqd[`sqd${i}`];
+                    if (val === "STRONGLY AGREE") { sqdCounts[i].SA++; totalOverallSA_A++; }
+                    else if (val === "AGREE") { sqdCounts[i].A++; totalOverallSA_A++; }
+                    else if (val === "NEITHER AGREE OR DISAGREE") sqdCounts[i].N++;
+                    else if (val === "DISAGREE") sqdCounts[i].D++;
+                    else if (val === "STRONGLY DISAGREE") sqdCounts[i].SD++;
+                    else if (val === "N/A") sqdCounts[i].NA++;
+
+                    if (val !== "N/A" && val) totalOverallValidResp++;
+                }
+            });
+
+            // Update Top Metrics
+            document.getElementById('repCcAwareness').innerText = `${((ccAwareCount / totalResp) * 100).toFixed(2)}%`;
+            document.getElementById('repCcHelpfulness').innerText = `${((ccHelpfulCount / totalResp) * 100).toFixed(2)}%`;
+
+            const overallScore = totalOverallValidResp > 0 ? ((totalOverallSA_A / totalOverallValidResp) * 100).toFixed(2) : 0;
+            document.getElementById('repOverallScore').innerText = `${overallScore}%`;
+            document.getElementById('repInterpretation').innerText = getInterpretation(overallScore);
+
+            // Update SQD Table
+            const sqdNames = ["SQD1 (Responsiveness)", "SQD2 (Reliability)", "SQD3 (Access & Facilities)", "SQD4 (Communication)", "SQD5 (Costs)", "SQD6 (Integrity)", "SQD7 (Assurance)", "SQD8 (Outcome)"];
+            let tableHTML = "";
+
+            for(let i=1; i<=8; i++) {
+                const c = sqdCounts[i];
+                const validResp = totalResp - c.NA;
+                const score = validResp > 0 ? (((c.SA + c.A) / validResp) * 100).toFixed(2) : 0;
+                const interp = getInterpretation(score);
+
+                tableHTML += `<tr>
+                    <td><strong>${sqdNames[i-1]}</strong></td>
+                    <td style="text-align:center;">${c.SA}</td>
+                    <td style="text-align:center;">${c.A}</td>
+                    <td style="text-align:center;">${c.N}</td>
+                    <td style="text-align:center;">${c.D}</td>
+                    <td style="text-align:center;">${c.SD}</td>
+                    <td style="text-align:center; color:#64748b;">${c.NA}</td>
+                    <td style="text-align:center; font-weight:bold; color: #16a34a; background:#f1f5f9;">${score}%</td>
+                    <td style="text-align:center; background:#f1f5f9;">${interp}</td>
+                </tr>`;
+            }
+            document.getElementById('sqdReportBody').innerHTML = tableHTML;
+        };
+
+        // Re-calculate report if Total Transactions is updated manually
+        document.getElementById('totalTransactionsInput').addEventListener('input', window.generateReport);
 
         function buildTallyRow(data) {
             let r = `<td>${data.refCode}</td><td>${data.serviceCC}</td>`;
@@ -383,9 +479,12 @@
             const onlineTally = document.getElementById('onlineTallyBody');
             
             masterBody.innerHTML = ""; onsiteTally.innerHTML = ""; onlineTally.innerHTML = ""; 
+            globalCsmData = []; // Clear and rebuild array for Reports
             
             snapshot.forEach((doc) => {
                 const data = doc.data();
+                globalCsmData.push(data); // Add to our reporting array
+                
                 let total = 0, valid = 0;
                 for(let i=1; i<=8; i++) {
                     let val = data.sqd[`sqd${i}`];
@@ -404,6 +503,9 @@
                 if (data.source === "Onsite") onsiteTally.appendChild(tallyRow);
                 else if (data.source === "Online") onlineTally.appendChild(tallyRow);
             });
+
+            // Trigger Report generation every time Firebase sends new data
+            window.generateReport();
         });
         
         document.getElementById('date').valueAsDate = new Date();
