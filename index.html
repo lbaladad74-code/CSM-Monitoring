@@ -7,216 +7,208 @@
     
     <style>
         :root {
-            --primary: #0f172a;
-            --secondary: #3b82f6;
-            --background: #f1f5f9;
+            --sidebar-bg: #0f172a;
+            --sidebar-hover: #1e293b;
+            --primary: #3b82f6;
+            --background: #f8fafc;
             --surface: #ffffff;
             --text: #334155;
             --border: #cbd5e1;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            display: flex;
+            height: 100vh;
             background-color: var(--background);
             color: var(--text);
-            margin: 0;
-            padding: 20px;
         }
 
-        .dashboard-container {
-            max-width: 1200px;
-            margin: 0 auto;
+        /* --- SIDEBAR STYLES --- */
+        .sidebar {
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            color: white;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            border-bottom: 1px solid #334155;
+            text-align: center;
+        }
+
+        .nav-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-links li {
+            padding: 15px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid #1e293b;
+            transition: background 0.3s;
+        }
+
+        .nav-links li:hover, .nav-links li.active-nav {
+            background-color: var(--sidebar-hover);
+            border-left: 4px solid var(--primary);
+        }
+
+        /* --- MAIN CONTENT STYLES --- */
+        .main-content {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .view-section {
+            display: none; /* Hide all sections by default */
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .view-section.active-section {
+            display: block; /* Show only the active section */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .card {
             background: var(--surface);
-            padding: 30px;
+            padding: 25px;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
-        h1, h2, h3 { margin-top: 0; color: var(--primary); }
-        h3 { border-bottom: 2px solid var(--border); padding-bottom: 10px; margin-top: 20px; }
+        h1, h2, h3 { margin-top: 0; }
 
-        /* Form Grid Layouts */
-        .form-section { margin-bottom: 25px; }
-        
+        /* --- FORM STYLES (From previous step) --- */
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-        
-        /* Grid for SQD - 3 columns for 9 questions */
         .sqd-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            background: #f8fafc;
-            padding: 15px;
-            border-radius: 6px;
-            border: 1px solid var(--border);
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;
+            background: #f8fafc; padding: 15px; border-radius: 6px; border: 1px solid var(--border);
         }
-
-        label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; }
         
+        label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 13px; }
         input[type="text"], select, textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 14px;
+            width: 100%; padding: 10px; border: 1px solid var(--border);
+            border-radius: 4px; box-sizing: border-box;
         }
-
-        textarea { resize: vertical; min-height: 80px; }
-
         button {
-            background-color: var(--secondary);
-            color: white;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-            padding: 12px 24px;
-            border-radius: 4px;
-            font-size: 16px;
-            width: 100%;
-            margin-top: 10px;
+            background-color: var(--primary); color: white; border: none;
+            padding: 12px 24px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%;
         }
-
         button:hover { background-color: #2563eb; }
-
-        /* Table Styling */
-        .table-container { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
-        th, td { text-align: left; padding: 12px; border-bottom: 1px solid var(--border); }
-        th { background-color: var(--primary); color: white; white-space: nowrap;}
         
-        .avg-score { font-weight: bold; color: #16a34a; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid var(--border); }
+        th { background-color: var(--sidebar-bg); color: white; }
     </style>
 </head>
 <body>
-    <div class="dashboard-container">
-        <header>
-            <h1>Client Satisfaction Measurement (CSM)</h1>
-        </header>
 
-        <div class="card">
-            <h2>Submit CSM Feedback</h2>
-            <form id="csmForm">
-                
-                <div class="form-section">
-                    <h3>1. Transaction Details</h3>
-                    <div class="grid-2">
+    <nav class="sidebar">
+        <div class="sidebar-header">CSM Admin</div>
+        <ul class="nav-links">
+            <li onclick="switchTab('dashboard')" class="active-nav" id="nav-dashboard">Dashboard</li>
+            <li onclick="switchTab('master-data')" id="nav-master-data">Master Data</li>
+            <li onclick="switchTab('onsite-consolidator')" id="nav-onsite-consolidator">Onsite Consolidator</li>
+            <li onclick="switchTab('online-consolidator')" id="nav-online-consolidator">Online Consolidator</li>
+            <li onclick="switchTab('report')" id="nav-report">Report</li>
+            <li onclick="switchTab('good-comments')" id="nav-good-comments">Good Comments</li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+
+        <div id="dashboard" class="view-section active-section">
+            <h1>Dashboard Overview</h1>
+            <div class="card">
+                <p>Welcome to the CSM Monitoring System. Select a tab from the left to begin.</p>
+                </div>
+        </div>
+
+        <div id="master-data" class="view-section">
+            <h1>Master Data Management</h1>
+            <div class="card">
+                <p>Manage your Divisions and specific Services here.</p>
+                </div>
+        </div>
+
+        <div id="onsite-consolidator" class="view-section">
+            <h1>Onsite Consolidator</h1>
+            <div class="card">
+                <h2>Manual Entry (Walk-in Clients)</h2>
+                <form id="csmForm">
+                    <div class="grid-2" style="margin-bottom: 15px;">
                         <div>
                             <label>Functional Division</label>
                             <select id="division" required>
                                 <option value="">Select Division...</option>
                                 <option value="Office of the Regional Director">1.0 Office of the Regional Director</option>
-                                <option value="Office of the Assistant Regional Director">2.0 Office of the Assistant Reg. Director</option>
                                 <option value="Administrative Division">3.0 Administrative Division</option>
-                                <option value="Curriculum and Learning Management">4.0 Curriculum & Learning Management</option>
-                                <option value="CLMD - LRMS">5.0 CLMD - LRMS</option>
-                                <option value="Education Support Services">6.0 Education Support Services</option>
-                                <option value="Finance Division">7.0 Finance Division</option>
-                                <option value="Field Technical Assistance">8.0 Field Technical Assistance</option>
-                                <option value="Human Resource Development">9.0 Human Resource Development</option>
-                                <option value="NEAP-R1">10.0 NEAP-R1</option>
-                                <option value="ORD - ICTU">11.0 ORD - ICTU</option>
-                                <option value="ORD - Legal Unit">12.0 ORD - Legal Unit</option>
-                                <option value="ORD - Public Affairs Unit">13.0 ORD - Public Affairs Unit</option>
-                                <option value="Policy, Planning and Research">14.0 Policy, Planning and Research</option>
-                                <option value="Quality Assurance Division">15.0 Quality Assurance Division</option>
-                            </select>
+                                </select>
                         </div>
                         <div>
                             <label>Specific Service Availed</label>
-                            <input type="text" id="service" placeholder="e.g., Issuance of Foreign Official Travel Authority" required>
+                            <input type="text" id="service" placeholder="e.g., Issuance of Travel Authority" required>
                         </div>
                     </div>
-                </div>
 
-                <div class="form-section">
-                    <h3>2. Citizen's Charter (CC)</h3>
-                    <div class="grid-3">
-                        <div>
-                            <label>CC1</label>
-                            <select id="cc1" required>
-                                <option value="1">1 - Ans 1</option>
-                                <option value="2">2 - Ans 2</option>
-                                <option value="3">3 - Ans 3</option>
-                                <option value="4">4 - Ans 4</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>CC2</label>
-                            <select id="cc2" required>
-                                <option value="1">1 - Ans 1</option>
-                                <option value="2">2 - Ans 2</option>
-                                <option value="3">3 - Ans 3</option>
-                                <option value="4">4 - Ans 4</option>
-                                <option value="5">5 - Ans 5</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>CC3</label>
-                            <select id="cc3" required>
-                                <option value="1">1 - Ans 1</option>
-                                <option value="2">2 - Ans 2</option>
-                                <option value="3">3 - Ans 3</option>
-                                <option value="4">4 - Ans 4</option>
-                            </select>
-                        </div>
+                    <div class="grid-3" style="margin-bottom: 15px;">
+                        <div><label>CC1</label><select id="cc1"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div>
+                        <div><label>CC2</label><select id="cc2"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+                        <div><label>CC3</label><select id="cc3"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div>
                     </div>
-                </div>
 
-                <div class="form-section">
-                    <h3>3. Service Quality Dimensions (SQD)</h3>
-                    <p style="font-size: 12px; margin-top: 0;">Rate 5 (Strongly Agree) to 1 (Strongly Disagree), or N/A.</p>
-                    <div class="sqd-grid">
+                    <div class="sqd-grid" style="margin-bottom: 15px;">
                         <script>
-                            const sqdLabels = [
-                                "SQD0", "SQD1 (Responsiveness)", "SQD2 (Reliability)", 
-                                "SQD3 (Access & Facilities)", "SQD4 (Communication)", 
-                                "SQD5 (Costs)", "SQD6 (Integrity)", "SQD7 (Assurance)", "SQD8 (Outcome)"
-                            ];
+                            const sqdLabels = ["SQD0", "SQD1", "SQD2", "SQD3", "SQD4", "SQD5", "SQD6", "SQD7", "SQD8"];
                             sqdLabels.forEach((label, index) => {
                                 document.write(`
-                                    <div>
-                                        <label>${label}</label>
-                                        <select id="sqd${index}" required>
-                                            <option value="5">5 - Strongly Agree</option>
-                                            <option value="4">4 - Agree</option>
-                                            <option value="3">3 - Neither</option>
-                                            <option value="2">2 - Disagree</option>
-                                            <option value="1">1 - Strongly Disagree</option>
-                                            <option value="N/A">N/A</option>
-                                        </select>
-                                    </div>
+                                    <div><label>${label}</label>
+                                    <select id="sqd${index}">
+                                        <option value="5">5 - Strongly Agree</option>
+                                        <option value="4">4 - Agree</option>
+                                        <option value="3">3 - Neither</option>
+                                        <option value="2">2 - Disagree</option>
+                                        <option value="1">1 - Strongly Disagree</option>
+                                        <option value="N/A">N/A</option>
+                                    </select></div>
                                 `);
                             });
                         </script>
                     </div>
-                </div>
 
-                <div class="form-section">
-                    <h3>4. Suggestions / Feedback</h3>
-                    <textarea id="feedback" placeholder="Enter client suggestions or feedback here..."></textarea>
-                </div>
+                    <label>Feedback / Suggestions</label>
+                    <textarea id="feedback" style="margin-bottom: 15px;"></textarea>
 
-                <button type="submit">Submit CSM Data</button>
-            </form>
+                    <button type="submit">Save Onsite Data</button>
+                </form>
+            </div>
         </div>
 
-        <div class="card">
-            <h2>CSM Submissions Overview</h2>
-            <div class="table-container">
-                <table id="csmTable">
+        <div id="online-consolidator" class="view-section">
+            <h1>Online Consolidator</h1>
+            <div class="card">
+                <p>Digital responses aggregated here.</p>
+                <table id="onlineTable">
                     <thead>
                         <tr>
                             <th>Date</th>
                             <th>Division</th>
                             <th>Service</th>
-                            <th>Avg SQD (1-8)</th>
-                            <th>Feedback</th>
+                            <th>Avg SQD</th>
                         </tr>
                     </thead>
                     <tbody id="csmData">
@@ -224,11 +216,38 @@
                 </table>
             </div>
         </div>
-    </div>
+
+        <div id="report" class="view-section">
+            <h1>CSM Reports</h1>
+            <div class="card">
+                <p>Generate analytical reports and SQD average breakdowns.</p>
+            </div>
+        </div>
+
+        <div id="good-comments" class="view-section">
+            <h1>Good Comments & Feedback</h1>
+            <div class="card">
+                <p>Filtered list of positive feedback for recognition.</p>
+            </div>
+        </div>
+
+    </main>
 
     <script type="module">
+        // --- 1. UI NAVIGATION LOGIC ---
+        window.switchTab = function(tabId) {
+            // Hide all sections
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active-section'));
+            // Remove active styling from all nav links
+            document.querySelectorAll('.nav-links li').forEach(el => el.classList.remove('active-nav'));
+            
+            // Show target section and highlight nav link
+            document.getElementById(tabId).classList.add('active-section');
+            document.getElementById('nav-' + tabId).classList.add('active-nav');
+        };
+
+        // --- 2. FIREBASE LOGIC ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-analytics.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } 
         from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
 
@@ -238,83 +257,56 @@
           projectId: "csm-monitoring",
           storageBucket: "csm-monitoring.firebasestorage.app",
           messagingSenderId: "605728862475",
-          appId: "1:605728862475:web:31158389ab5b6893aef20e",
-          measurementId: "G-ZLKZ1SXDPX"
+          appId: "1:605728862475:web:31158389ab5b6893aef20e"
         };
 
         const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
         const db = getFirestore(app);
 
-        const csmForm = document.getElementById('csmForm');
-        const csmData = document.getElementById('csmData');
-
-        // --- 1. ADD DATA TO FIREBASE ---
-        csmForm.addEventListener('submit', async (e) => {
+        // Submitting the form (Onsite Consolidator)
+        document.getElementById('csmForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-
-            // Gather SQD values
             const sqdValues = {};
-            for(let i = 0; i <= 8; i++) {
-                sqdValues[`sqd${i}`] = document.getElementById(`sqd${i}`).value;
-            }
-
-            const payload = {
-                division: document.getElementById('division').value,
-                service: document.getElementById('service').value,
-                cc1: document.getElementById('cc1').value,
-                cc2: document.getElementById('cc2').value,
-                cc3: document.getElementById('cc3').value,
-                sqd: sqdValues,
-                feedback: document.getElementById('feedback').value,
-                timestamp: new Date()
-            };
+            for(let i=0; i<=8; i++) sqdValues[`sqd${i}`] = document.getElementById(`sqd${i}`).value;
 
             try {
-                // Saving to a new collection called "csm_responses"
-                await addDoc(collection(db, "csm_responses"), payload);
-                csmForm.reset(); 
-                alert("CSM Data Submitted Successfully!");
+                await addDoc(collection(db, "csm_responses"), {
+                    division: document.getElementById('division').value,
+                    service: document.getElementById('service').value,
+                    sqd: sqdValues,
+                    feedback: document.getElementById('feedback').value,
+                    source: "Onsite", // Tagging where it came from
+                    timestamp: new Date()
+                });
+                document.getElementById('csmForm').reset();
+                alert("Data Saved Successfully!");
             } catch (error) {
-                console.error("Error adding document: ", error);
-                alert("Error saving data. See console.");
+                console.error("Error: ", error);
             }
         });
 
-        // --- 2. READ DATA IN REAL-TIME ---
-        const q = query(collection(db, "csm_responses"), orderBy("timestamp", "desc"));
-
-        onSnapshot(q, (snapshot) => {
-            csmData.innerHTML = ""; 
-            
+        // Reading Data (Online Consolidator View)
+        onSnapshot(query(collection(db, "csm_responses"), orderBy("timestamp", "desc")), (snapshot) => {
+            const tableBody = document.getElementById('csmData');
+            tableBody.innerHTML = ""; 
             snapshot.forEach((doc) => {
                 const data = doc.data();
-                const row = document.createElement("tr");
                 
-                // Calculate Average SQD (excluding SQD0 and N/A values)
-                let totalScore = 0;
-                let validQuestions = 0;
-                for(let i = 1; i <= 8; i++) {
-                    let val = data.sqd[`sqd${i}`];
-                    if(val !== "N/A") {
-                        totalScore += parseInt(val);
-                        validQuestions++;
-                    }
+                // Calculate average SQD
+                let total = 0, valid = 0;
+                for(let i=1; i<=8; i++) {
+                    if(data.sqd[`sqd${i}`] !== "N/A") { total += parseInt(data.sqd[`sqd${i}`]); valid++; }
                 }
-                let avg = validQuestions > 0 ? (totalScore / validQuestions).toFixed(2) : "N/A";
+                let avg = valid > 0 ? (total / valid).toFixed(2) : "N/A";
 
-                // Format the date
-                const dateString = data.timestamp ? data.timestamp.toDate().toLocaleDateString() : 'N/A';
-
+                const row = document.createElement("tr");
                 row.innerHTML = `
-                    <td>${dateString}</td>
+                    <td>${data.timestamp ? data.timestamp.toDate().toLocaleDateString() : 'N/A'}</td>
                     <td>${data.division}</td>
                     <td>${data.service}</td>
-                    <td class="avg-score">${avg}</td>
-                    <td>${data.feedback || "<em>No feedback</em>"}</td>
+                    <td><b>${avg}</b></td>
                 `;
-                
-                csmData.appendChild(row);
+                tableBody.appendChild(row);
             });
         });
     </script>
