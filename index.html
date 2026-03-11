@@ -6,113 +6,46 @@
     <title>CSM Monitoring System</title>
     
     <style>
+        /* ... Keeping your sleek CSS from earlier ... */
         :root {
-            --sidebar-bg: #0f172a;
-            --sidebar-hover: #1e293b;
-            --primary: #3b82f6;
-            --background: #f8fafc;
-            --surface: #ffffff;
-            --text: #334155;
-            --border: #cbd5e1;
+            --sidebar-bg: #0f172a; --sidebar-hover: #1e293b; --primary: #3b82f6;
+            --background: #f8fafc; --surface: #ffffff; --text: #334155; --border: #cbd5e1;
         }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            margin: 0;
-            display: flex;
-            height: 100vh;
-            background-color: var(--background);
-            color: var(--text);
-        }
-
-        /* --- SIDEBAR STYLES --- */
-        .sidebar {
-            width: 260px;
-            background-color: var(--sidebar-bg);
-            color: white;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .sidebar-header {
-            padding: 20px;
-            font-size: 20px;
-            font-weight: bold;
-            border-bottom: 1px solid #334155;
-            text-align: center;
-        }
-
-        .nav-links {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .nav-links li {
-            padding: 15px 20px;
-            cursor: pointer;
-            border-bottom: 1px solid #1e293b;
-            transition: background 0.3s;
-        }
-
-        .nav-links li:hover, .nav-links li.active-nav {
-            background-color: var(--sidebar-hover);
-            border-left: 4px solid var(--primary);
-        }
-
-        /* --- MAIN CONTENT STYLES --- */
-        .main-content {
-            flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-        }
-
-        .view-section {
-            display: none; /* Hide all sections by default */
-            animation: fadeIn 0.3s ease-in-out;
-        }
-
-        .view-section.active-section {
-            display: block; /* Show only the active section */
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .card {
-            background: var(--surface);
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-        }
-
-        h1, h2, h3 { margin-top: 0; }
-
-        /* --- FORM STYLES (From previous step) --- */
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-        .sqd-grid {
-            display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;
-            background: #f8fafc; padding: 15px; border-radius: 6px; border: 1px solid var(--border);
-        }
+        body { font-family: -apple-system, sans-serif; margin: 0; display: flex; height: 100vh; background: var(--background); color: var(--text); }
+        .sidebar { width: 260px; background: var(--sidebar-bg); color: white; display: flex; flex-direction: column; }
+        .sidebar-header { padding: 20px; font-size: 20px; font-weight: bold; border-bottom: 1px solid #334155; text-align: center; }
+        .nav-links { list-style: none; padding: 0; margin: 0; }
+        .nav-links li { padding: 15px 20px; cursor: pointer; border-bottom: 1px solid #1e293b; transition: background 0.3s; }
+        .nav-links li:hover, .nav-links li.active-nav { background: var(--sidebar-hover); border-left: 4px solid var(--primary); }
         
-        label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 13px; }
-        input[type="text"], select, textarea {
-            width: 100%; padding: 10px; border: 1px solid var(--border);
-            border-radius: 4px; box-sizing: border-box;
-        }
-        button {
-            background-color: var(--primary); color: white; border: none;
-            padding: 12px 24px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%;
-        }
-        button:hover { background-color: #2563eb; }
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; }
+        .view-section { display: none; animation: fadeIn 0.3s; }
+        .view-section.active-section { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .card { background: var(--surface); padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        h1, h2, h3 { margin-top: 0; color: #0f172a; }
+        h3 { border-bottom: 2px solid var(--border); padding-bottom: 8px; margin-top: 25px; font-size: 16px;}
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 15px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 15px; }
         
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 14px; }
-        th, td { text-align: left; padding: 12px; border-bottom: 1px solid var(--border); }
-        th { background-color: var(--sidebar-bg); color: white; }
+        .sqd-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; background: #f8fafc; padding: 15px; border-radius: 6px; border: 1px solid var(--border); margin-bottom: 15px; }
+        
+        label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 12px; text-transform: uppercase; color: #475569;}
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 4px; box-sizing: border-box; font-size: 14px;}
+        input[readonly] { background-color: #e2e8f0; color: #64748b; cursor: not-allowed; font-weight: bold;}
+        
+        button { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px;}
+        button:hover { background: #2563eb; }
+        
+        /* Master Data Table Styles */
+        .table-wrapper { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 12px; white-space: nowrap; }
+        th, td { padding: 10px; border: 1px solid var(--border); text-align: left; }
+        th { background: var(--sidebar-bg); color: white; }
     </style>
 </head>
 <body>
@@ -120,8 +53,8 @@
     <nav class="sidebar">
         <div class="sidebar-header">CSM Admin</div>
         <ul class="nav-links">
-            <li onclick="switchTab('dashboard')" class="active-nav" id="nav-dashboard">Dashboard</li>
-            <li onclick="switchTab('master-data')" id="nav-master-data">Master Data</li>
+            <li onclick="switchTab('dashboard')" id="nav-dashboard">Dashboard</li>
+            <li onclick="switchTab('master-data')" class="active-nav" id="nav-master-data">Master Data</li>
             <li onclick="switchTab('onsite-consolidator')" id="nav-onsite-consolidator">Onsite Consolidator</li>
             <li onclick="switchTab('online-consolidator')" id="nav-online-consolidator">Online Consolidator</li>
             <li onclick="switchTab('report')" id="nav-report">Report</li>
@@ -130,53 +63,104 @@
     </nav>
 
     <main class="main-content">
-
-        <div id="dashboard" class="view-section active-section">
-            <h1>Dashboard Overview</h1>
-            <div class="card">
-                <p>Welcome to the CSM Monitoring System. Select a tab from the left to begin.</p>
-                </div>
+        <div id="dashboard" class="view-section">
+            <h1>Dashboard</h1><div class="card"><p>System Overview</p></div>
         </div>
 
-        <div id="master-data" class="view-section">
-            <h1>Master Data Management</h1>
-            <div class="card">
-                <p>Manage your Divisions and specific Services here.</p>
-                </div>
+        <div id="master-data" class="view-section active-section">
+            <h1>Master Data Repository</h1>
+            <div class="card table-wrapper">
+                <table id="masterTable">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Control No.</th>
+                            <th>Client Type</th>
+                            <th>Sex</th>
+                            <th>Age</th>
+                            <th>Region</th>
+                            <th>Section/Unit</th>
+                            <th>Ref Code</th>
+                            <th>Service (CC)</th>
+                            <th>Service Availed</th>
+                            <th>Avg SQD</th>
+                            <th>Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody id="masterDataBody">
+                        </tbody>
+                </table>
+            </div>
         </div>
 
         <div id="onsite-consolidator" class="view-section">
             <h1>Onsite Consolidator</h1>
             <div class="card">
-                <h2>Manual Entry (Walk-in Clients)</h2>
                 <form id="csmForm">
-                    <div class="grid-2" style="margin-bottom: 15px;">
-                        <div>
-                            <label>Functional Division</label>
-                            <select id="division" required>
-                                <option value="">Select Division...</option>
-                                <option value="Office of the Regional Director">1.0 Office of the Regional Director</option>
-                                <option value="Administrative Division">3.0 Administrative Division</option>
+                    
+                    <h3>1. Client Demographics</h3>
+                    <div class="grid-4">
+                        <div><label>Date</label><input type="date" id="date" required></div>
+                        <div><label>Control No.</label><input type="text" id="controlNo" placeholder="e.g. CTRL-001" required></div>
+                        <div><label>Client Type</label>
+                            <select id="clientType" required>
+                                <option value="Citizen">Citizen</option>
+                                <option value="Business">Business</option>
+                                <option value="Government">Government</option>
+                            </select>
+                        </div>
+                        <div><label>Sex</label>
+                            <select id="sex" required>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                        </div>
+                        <div><label>Age</label><input type="number" id="age" min="1" max="120" required></div>
+                        <div><label>Region of Origin</label><input type="text" id="region" value="Region I" required></div>
+                    </div>
+
+                    <h3>2. Transaction Details</h3>
+                    <div class="grid-2">
+                        <div><label>Section / Unit</label>
+                            <select id="sectionUnit" required>
+                                <option value="">Select Unit...</option>
+                                <option value="ORD">Office of the Regional Director (ORD)</option>
+                                <option value="OARD">Office of the Asst. Regional Director</option>
+                                <option value="Asset Management">Asset Management Section</option>
+                                <option value="Cash Unit">Cash Unit</option>
+                                <option value="Personnel Section">Personnel Section</option>
                                 </select>
                         </div>
-                        <div>
-                            <label>Specific Service Availed</label>
-                            <input type="text" id="service" placeholder="e.g., Issuance of Travel Authority" required>
+                        <div><label>Service Availed as per CC</label>
+                            <select id="serviceCC" onchange="updateRefCode()" required>
+                                <option value="">Select Service...</option>
+                                <option value="Issuance of Foreign Official Travel Authority">Issuance of Foreign Official Travel Authority</option>
+                                <option value="Issuance of Foreign Personal Travel Authority">Issuance of Foreign Personal Travel Authority</option>
+                                <option value="BAC">BAC</option>
+                                <option value="Requisition of Supplies, Materials and Equipment">Requisition of Supplies, Materials and Equipment</option>
+                                <option value="Payment of External and Internal Claims">Payment of External and Internal Claims</option>
+                            </select>
+                        </div>
+                        <div><label>Ref Code</label>
+                            <input type="text" id="refCode" placeholder="Auto-fills based on Service" readonly required>
+                        </div>
+                        <div><label>Actual Service Availed</label>
+                            <input type="text" id="actualService" placeholder="Specific service details..." required>
                         </div>
                     </div>
 
-                    <div class="grid-3" style="margin-bottom: 15px;">
+                    <h3>3. Citizen's Charter & SQD</h3>
+                    <div class="grid-3">
                         <div><label>CC1</label><select id="cc1"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div>
                         <div><label>CC2</label><select id="cc2"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
                         <div><label>CC3</label><select id="cc3"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div>
                     </div>
 
-                    <div class="sqd-grid" style="margin-bottom: 15px;">
+                    <div class="sqd-grid">
                         <script>
                             const sqdLabels = ["SQD0", "SQD1", "SQD2", "SQD3", "SQD4", "SQD5", "SQD6", "SQD7", "SQD8"];
                             sqdLabels.forEach((label, index) => {
-                                document.write(`
-                                    <div><label>${label}</label>
+                                document.write(`<div><label>${label}</label>
                                     <select id="sqd${index}">
                                         <option value="5">5 - Strongly Agree</option>
                                         <option value="4">4 - Agree</option>
@@ -184,69 +168,53 @@
                                         <option value="2">2 - Disagree</option>
                                         <option value="1">1 - Strongly Disagree</option>
                                         <option value="N/A">N/A</option>
-                                    </select></div>
-                                `);
+                                    </select></div>`);
                             });
                         </script>
                     </div>
 
-                    <label>Feedback / Suggestions</label>
-                    <textarea id="feedback" style="margin-bottom: 15px;"></textarea>
+                    <h3>4. Comments / Remarks</h3>
+                    <textarea id="remarks" placeholder="Enter comments, remarks, or suggestions here..."></textarea>
 
-                    <button type="submit">Save Onsite Data</button>
+                    <button type="submit" style="margin-top: 20px;">Save Transaction</button>
                 </form>
             </div>
         </div>
 
-        <div id="online-consolidator" class="view-section">
-            <h1>Online Consolidator</h1>
-            <div class="card">
-                <p>Digital responses aggregated here.</p>
-                <table id="onlineTable">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Division</th>
-                            <th>Service</th>
-                            <th>Avg SQD</th>
-                        </tr>
-                    </thead>
-                    <tbody id="csmData">
-                        </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div id="report" class="view-section">
-            <h1>CSM Reports</h1>
-            <div class="card">
-                <p>Generate analytical reports and SQD average breakdowns.</p>
-            </div>
-        </div>
-
-        <div id="good-comments" class="view-section">
-            <h1>Good Comments & Feedback</h1>
-            <div class="card">
-                <p>Filtered list of positive feedback for recognition.</p>
-            </div>
-        </div>
-
+        <div id="online-consolidator" class="view-section"><h1>Online Consolidator</h1><div class="card"><p>Online submissions view.</p></div></div>
+        <div id="report" class="view-section"><h1>Report</h1><div class="card"><p>Analytics and generation.</p></div></div>
+        <div id="good-comments" class="view-section"><h1>Good Comments</h1><div class="card"><p>Positive feedback.</p></div></div>
     </main>
 
     <script type="module">
-        // --- 1. UI NAVIGATION LOGIC ---
         window.switchTab = function(tabId) {
-            // Hide all sections
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active-section'));
-            // Remove active styling from all nav links
             document.querySelectorAll('.nav-links li').forEach(el => el.classList.remove('active-nav'));
-            
-            // Show target section and highlight nav link
             document.getElementById(tabId).classList.add('active-section');
             document.getElementById('nav-' + tabId).classList.add('active-nav');
         };
 
-        // --- 2. FIREBASE LOGIC ---
+        // --- THE REF CODE AUTOMATION DICTIONARY ---
+        // This links the exact dropdown text to the reference code from your images
+        const serviceDatabase = {
+            "Issuance of Foreign Official Travel Authority": "1.1",
+            "Issuance of Foreign Personal Travel Authority": "1.2",
+            "BAC": "2.1",
+            "Requisition of Supplies, Materials and Equipment": "3.a.1",
+            "Payment of External and Internal Claims": "3.b.1"
+            // You can easily add the rest of your 100+ services here in this exact format!
+        };
+
+        // This function triggers whenever the dropdown changes
+        window.updateRefCode = function() {
+            const selectedService = document.getElementById('serviceCC').value;
+            const refInput = document.getElementById('refCode');
+            
+            // If the service is in our database, put the code in the box. Otherwise, leave it blank.
+            refInput.value = serviceDatabase[selectedService] || "";
+        };
+
+        // --- FIREBASE SETUP ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } 
         from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
@@ -263,36 +231,51 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Submitting the form (Onsite Consolidator)
+        // --- SUBMIT FORM ---
         document.getElementById('csmForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const sqdValues = {};
             for(let i=0; i<=8; i++) sqdValues[`sqd${i}`] = document.getElementById(`sqd${i}`).value;
 
             try {
-                await addDoc(collection(db, "csm_responses"), {
-                    division: document.getElementById('division').value,
-                    service: document.getElementById('service').value,
+                await addDoc(collection(db, "csm_master"), {
+                    date: document.getElementById('date').value,
+                    controlNo: document.getElementById('controlNo').value,
+                    clientType: document.getElementById('clientType').value,
+                    sex: document.getElementById('sex').value,
+                    age: document.getElementById('age').value,
+                    region: document.getElementById('region').value,
+                    sectionUnit: document.getElementById('sectionUnit').value,
+                    serviceCC: document.getElementById('serviceCC').value,
+                    refCode: document.getElementById('refCode').value,
+                    actualService: document.getElementById('actualService').value,
+                    cc: {
+                        cc1: document.getElementById('cc1').value,
+                        cc2: document.getElementById('cc2').value,
+                        cc3: document.getElementById('cc3').value
+                    },
                     sqd: sqdValues,
-                    feedback: document.getElementById('feedback').value,
-                    source: "Onsite", // Tagging where it came from
+                    remarks: document.getElementById('remarks').value,
                     timestamp: new Date()
                 });
+                
+                alert("Master Record Saved Successfully!");
                 document.getElementById('csmForm').reset();
-                alert("Data Saved Successfully!");
+                document.getElementById('refCode').value = ""; // Clear readonly field
             } catch (error) {
-                console.error("Error: ", error);
+                console.error("Error saving to Firebase: ", error);
             }
         });
 
-        // Reading Data (Online Consolidator View)
-        onSnapshot(query(collection(db, "csm_responses"), orderBy("timestamp", "desc")), (snapshot) => {
-            const tableBody = document.getElementById('csmData');
-            tableBody.innerHTML = ""; 
+        // --- READ AND POPULATE MASTER DATA TABLE ---
+        onSnapshot(query(collection(db, "csm_master"), orderBy("timestamp", "desc")), (snapshot) => {
+            const tbody = document.getElementById('masterDataBody');
+            tbody.innerHTML = ""; 
+            
             snapshot.forEach((doc) => {
                 const data = doc.data();
                 
-                // Calculate average SQD
+                // Calculate Avg SQD
                 let total = 0, valid = 0;
                 for(let i=1; i<=8; i++) {
                     if(data.sqd[`sqd${i}`] !== "N/A") { total += parseInt(data.sqd[`sqd${i}`]); valid++; }
@@ -301,14 +284,25 @@
 
                 const row = document.createElement("tr");
                 row.innerHTML = `
-                    <td>${data.timestamp ? data.timestamp.toDate().toLocaleDateString() : 'N/A'}</td>
-                    <td>${data.division}</td>
-                    <td>${data.service}</td>
-                    <td><b>${avg}</b></td>
+                    <td>${data.date}</td>
+                    <td>${data.controlNo}</td>
+                    <td>${data.clientType}</td>
+                    <td>${data.sex}</td>
+                    <td>${data.age}</td>
+                    <td>${data.region}</td>
+                    <td>${data.sectionUnit}</td>
+                    <td><strong>${data.refCode}</strong></td>
+                    <td>${data.serviceCC}</td>
+                    <td>${data.actualService}</td>
+                    <td style="color:#16a34a; font-weight:bold;">${avg}</td>
+                    <td>${data.remarks || "-"}</td>
                 `;
-                tableBody.appendChild(row);
+                tbody.appendChild(row);
             });
         });
+        
+        // Auto-set today's date on load
+        document.getElementById('date').valueAsDate = new Date();
     </script>
 </body>
 </html>
