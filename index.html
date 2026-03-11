@@ -45,7 +45,7 @@
         .table-wrapper { overflow-x: auto; }
         .basic-table { width: 100%; border-collapse: collapse; font-size: 12px; white-space: nowrap; }
         .basic-table th, .basic-table td { padding: 10px; border: 1px solid var(--border); text-align: left; }
-        .basic-table th { background: var(--sidebar-bg); color: white; }
+        .basic-table th { background: var(--sidebar-bg); color: white; position: sticky; top: 0; z-index: 10;}
         
         .badge-onsite { background-color: #f59e0b; color: white; padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight: bold;}
         .badge-online { background-color: #10b981; color: white; padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight: bold;}
@@ -228,22 +228,12 @@
                 </div>
             </div>
 
-            <div class="grid-2">
-                <div class="card table-wrapper" style="padding: 0; overflow: hidden; max-height: 400px; overflow-y: auto;">
-                    <div class="summary-card-header" style="position: sticky; top: 0; z-index: 10;">No. of Clients per Service</div>
-                    <table class="basic-table" style="border:none;">
-                        <thead><tr><th>Service Availed</th><th style="text-align:center;">Count</th></tr></thead>
-                        <tbody id="serviceTallyBody"></tbody>
-                    </table>
-                </div>
-                
-                <div class="card table-wrapper" style="padding: 0; overflow: hidden;">
-                    <div class="summary-card-header">Citizen's Charter (CC) Tally</div>
-                    <table class="basic-table" style="border:none; text-align: center;">
-                        <thead><tr><th style="text-align:left;">Question</th><th>Opt 1</th><th>Opt 2</th><th>Opt 3</th><th>Opt 4</th><th>Opt 5</th></tr></thead>
-                        <tbody id="ccTallyBody"></tbody>
-                    </table>
-                </div>
+            <div class="card table-wrapper" style="padding: 0; overflow: hidden;">
+                <div class="summary-card-header">Citizen's Charter (CC) Tally</div>
+                <table class="basic-table" style="border:none; text-align: center;">
+                    <thead><tr><th style="text-align:left;">Question</th><th>Opt 1</th><th>Opt 2</th><th>Opt 3</th><th>Opt 4</th><th>Opt 5</th></tr></thead>
+                    <tbody id="ccTallyBody"></tbody>
+                </table>
             </div>
 
             <div class="card table-wrapper" style="padding: 0; overflow: hidden;">
@@ -261,6 +251,22 @@
             </div>
 
             <div class="section-divider"></div>
+
+            <div class="card table-wrapper" style="padding: 0; max-height: 500px; overflow-y: auto;">
+                <div class="summary-card-header" style="position: sticky; top: 0; z-index: 10; background: #0f172a; color: white;">
+                    Master Inventory: No. of Clients per Service
+                </div>
+                <table class="basic-table" style="border:none;">
+                    <thead style="position: sticky; top: 40px; z-index: 9;">
+                        <tr>
+                            <th style="width: 100px; text-align: center;">Ref Code</th>
+                            <th>Specific Service Availed</th>
+                            <th style="text-align: center; width: 150px;">Total Clients</th>
+                        </tr>
+                    </thead>
+                    <tbody id="serviceMasterTallyBody"></tbody>
+                </table>
+            </div>
 
             <div class="card table-wrapper">
                 <h3 style="margin-top: 0; color: #0f172a;">Total CSM Submissions per Quarter</h3>
@@ -487,28 +493,19 @@
 
         // --- DASHBOARD CHARTS UPDATE ---
         function updateDashboardCharts() {
-            const divCounts = {};
-            let onsite = 0, online = 0;
-            let cit = 0, gov = 0, bus = 0, dns = 0;
-
+            const divCounts = {}; let onsite = 0, online = 0; let cit = 0, gov = 0, bus = 0, dns = 0;
             globalCsmData.forEach(d => {
                 const divName = d.sectionUnit ? d.sectionUnit.substring(0, 15) + "..." : "Unknown";
                 divCounts[divName] = (divCounts[divName] || 0) + 1;
                 if (d.source === 'Onsite') onsite++; else online++;
-                if (d.clientType === 'Citizen') cit++;
-                else if (d.clientType === 'Government') gov++;
-                else if (d.clientType === 'Business') bus++;
-                else dns++;
+                if (d.clientType === 'Citizen') cit++; else if (d.clientType === 'Government') gov++; else if (d.clientType === 'Business') bus++; else dns++;
             });
-
             const divCtx = document.getElementById('divisionChart');
             if(divisionChart) divisionChart.destroy();
             divisionChart = new Chart(divCtx, { type: 'bar', data: { labels: Object.keys(divCounts), datasets: [{ label: 'Total Submissions', data: Object.values(divCounts), backgroundColor: '#3b82f6', borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false } });
-
             const srcCtx = document.getElementById('sourceChart');
             if(sourceChart) sourceChart.destroy();
             sourceChart = new Chart(srcCtx, { type: 'doughnut', data: { labels: ['Onsite', 'Online'], datasets: [{ data: [onsite, online], backgroundColor: ['#f59e0b', '#10b981'] }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '70%' } });
-
             const cliCtx = document.getElementById('clientChart');
             if(clientChart) clientChart.destroy();
             clientChart = new Chart(cliCtx, { type: 'doughnut', data: { labels: ['Citizen', 'Gov', 'Business', 'N/A'], datasets: [{ data: [cit, gov, bus, dns], backgroundColor: ['#3b82f6', '#8b5cf6', '#ec4899', '#cbd5e1'] }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '70%' } });
@@ -532,21 +529,19 @@
 
             if (totalResp === 0) return;
             
-            // Core counters
             let ccAwareCount = 0; let ccHelpfulCount = 0;
             const sqdCounts = {}; for(let i=0; i<=8; i++) sqdCounts[i] = { SA:0, A:0, N:0, D:0, SD:0, NA:0 };
             let totalOverallSA_A = 0; let totalOverallValidResp = 0;
 
-            // Consolidation Tab Counters
+            // Demographics & CC Counters
             const ctCounts = { "Citizen": 0, "Government": 0, "Business": 0, "Did Not Specify": 0 };
             const sexCounts = { "Male": 0, "Female": 0, "Did not Specify": 0 };
             const ageCounts = { "19 or Lower": 0, "20-34": 0, "35-49": 0, "50-64": 0, "65 or higher": 0, "DID NOT SPECIFY": 0 };
-            const svcCounts = {};
-            const ccTally = { 
-                cc1: { '1':0, '2':0, '3':0, '4':0 }, 
-                cc2: { '1':0, '2':0, '3':0, '4':0, '5':0 }, 
-                cc3: { '1':0, '2':0, '3':0, '4':0 } 
-            };
+            const ccTally = { cc1: { '1':0, '2':0, '3':0, '4':0 }, cc2: { '1':0, '2':0, '3':0, '4':0, '5':0 }, cc3: { '1':0, '2':0, '3':0, '4':0 } };
+
+            // Initialize Services Master Tally (Every single service starts at 0)
+            const refCounts = {};
+            servicesData.forEach(group => { group.items.forEach(item => { refCounts[item.ref] = 0; }); });
 
             const divStats = {};
             servicesData.forEach(g => { divStats[g.group] = { subs: { q1:0, q2:0, q3:0, q4:0, total:0 }, goods: { q1:0, q2:0, q3:0, q4:0, total:0 } }; });
@@ -554,15 +549,16 @@
             goodCommentsList.innerHTML = "";
 
             globalCsmData.forEach(data => {
-                // Demographics
                 if(ctCounts[data.clientType] !== undefined) ctCounts[data.clientType]++;
                 if(sexCounts[data.sex] !== undefined) sexCounts[data.sex]++;
                 if(ageCounts[data.age] !== undefined) ageCounts[data.age]++;
                 
-                // Services
-                if(data.serviceCC) svcCounts[data.serviceCC] = (svcCounts[data.serviceCC] || 0) + 1;
+                // Track services by unique Ref Code
+                if(data.refCode) {
+                    if (refCounts[data.refCode] !== undefined) refCounts[data.refCode]++;
+                    else refCounts[data.refCode] = 1; // Catch-all for legacy data
+                }
 
-                // CC Logic
                 if (['1','2','3'].includes(data.cc.cc1)) ccAwareCount++;
                 if (data.cc.cc3 === '1') ccHelpfulCount++;
                 
@@ -572,7 +568,6 @@
                 
                 let tempTotalSqd = 0; let tempValidSqd = 0;
 
-                // SQD Logic (0 to 8)
                 for(let i=0; i<=8; i++) {
                     const val = data.sqd[`sqd${i}`];
                     if (val === "STRONGLY AGREE") { sqdCounts[i].SA++; if(i>0) totalOverallSA_A++; }
@@ -588,7 +583,6 @@
                     }
                 }
 
-                // Quarterly Good Comments Logic
                 const div = data.sectionUnit;
                 if(divStats[div]) {
                     const dateObj = new Date(data.date);
@@ -613,7 +607,6 @@
                 }
             });
 
-            // 1. Output Top Metrics
             document.getElementById('repCcAwareness').innerText = `${((ccAwareCount / totalResp) * 100).toFixed(2)}%`;
             document.getElementById('repCcHelpfulness').innerText = `${((ccHelpfulCount / totalResp) * 100).toFixed(2)}%`;
             const overallScore = totalOverallValidResp > 0 ? ((totalOverallSA_A / totalOverallValidResp) * 100).toFixed(2) : 0;
@@ -621,7 +614,6 @@
             document.getElementById('repInterpretation').innerText = getInterpretation(overallScore);
             document.getElementById('dashOverallScore').innerText = `${overallScore}%`;
 
-            // 2. Output Report SQD Breakdown (SQD 1-8 only)
             const sqdNames = ["SQD0", "SQD1 (Responsiveness)", "SQD2 (Reliability)", "SQD3 (Access & Facilities)", "SQD4 (Communication)", "SQD5 (Costs)", "SQD6 (Integrity)", "SQD7 (Assurance)", "SQD8 (Outcome)"];
             let tableHTML = "";
             for(let i=1; i<=8; i++) {
@@ -631,14 +623,20 @@
             }
             document.getElementById('sqdReportBody').innerHTML = tableHTML;
 
-            // 3. Output Consolidations (Demographics, Services, CC, Master SQD)
             document.getElementById('ctTallyBody').innerHTML = Object.entries(ctCounts).map(([k,v]) => `<tr><td>${k}</td><td style="font-weight:bold;text-align:right;">${v}</td></tr>`).join('');
             document.getElementById('sexTallyBody').innerHTML = Object.entries(sexCounts).map(([k,v]) => `<tr><td>${k}</td><td style="font-weight:bold;text-align:right;">${v}</td></tr>`).join('');
             document.getElementById('ageTallyBody').innerHTML = Object.entries(ageCounts).map(([k,v]) => `<tr><td>${k}</td><td style="font-weight:bold;text-align:right;">${v}</td></tr>`).join('');
             
-            // Sort Services by count descending
-            const sortedSvcs = Object.entries(svcCounts).sort((a,b) => b[1] - a[1]);
-            document.getElementById('serviceTallyBody').innerHTML = sortedSvcs.map(([k,v]) => `<tr><td>${k}</td><td style="font-weight:bold;text-align:center;">${v}</td></tr>`).join('');
+            // BUILD FULL MASTER SERVICES INVENTORY HTML
+            let svcMasterHtml = "";
+            servicesData.forEach(group => {
+                svcMasterHtml += `<tr style="background-color: #e2e8f0;"><td colspan="3" style="font-weight: bold; text-align: left;">${group.group}</td></tr>`;
+                group.items.forEach(item => {
+                    let count = refCounts[item.ref] || 0;
+                    svcMasterHtml += `<tr><td style="text-align: center; font-weight: bold; color: #64748b;">${item.ref}</td><td style="padding-left: 15px;">${item.name}</td><td style="text-align: center; font-weight: bold; color: ${count > 0 ? '#2563eb' : '#cbd5e1'}; font-size: 14px;">${count}</td></tr>`;
+                });
+            });
+            document.getElementById('serviceMasterTallyBody').innerHTML = svcMasterHtml;
 
             document.getElementById('ccTallyBody').innerHTML = `
                 <tr><td style="text-align:left;font-weight:bold;">CC1</td><td>${ccTally.cc1['1']}</td><td>${ccTally.cc1['2']}</td><td>${ccTally.cc1['3']}</td><td>${ccTally.cc1['4']}</td><td>-</td></tr>
@@ -646,22 +644,15 @@
                 <tr><td style="text-align:left;font-weight:bold;">CC3</td><td>${ccTally.cc3['1']}</td><td>${ccTally.cc3['2']}</td><td>${ccTally.cc3['3']}</td><td>${ccTally.cc3['4']}</td><td>-</td></tr>
             `;
 
-            // Master SQD Table (Includes SQD0)
             let masterSqdHtml = "";
             for(let i=0; i<=8; i++) {
                 const c = sqdCounts[i]; const validResp = totalResp - c.NA;
                 const score = validResp > 0 ? (((c.SA + c.A) / validResp) * 100).toFixed(2) : 0;
                 let ratingText = i===0 ? "-" : `${score}% (${getInterpretation(score)})`;
-                
-                masterSqdHtml += `<tr>
-                    <td style="text-align:left; font-weight:bold;">${sqdNames[i]}</td>
-                    <td>${c.SA}</td><td>${c.A}</td><td>${c.N}</td><td>${c.D}</td><td>${c.SD}</td><td style="color:#64748b;">${c.NA}</td>
-                    <td style="background:#f1f5f9; font-weight:bold; color: #10b981;">${ratingText}</td>
-                </tr>`;
+                masterSqdHtml += `<tr><td style="text-align:left; font-weight:bold;">${sqdNames[i]}</td><td>${c.SA}</td><td>${c.A}</td><td>${c.N}</td><td>${c.D}</td><td>${c.SD}</td><td style="color:#64748b;">${c.NA}</td><td style="background:#f1f5f9; font-weight:bold; color: #10b981;">${ratingText}</td></tr>`;
             }
             document.getElementById('sqdMasterTallyBody').innerHTML = masterSqdHtml;
             
-            // 4. Output Good Comments Quarterly Logic
             let subHtml = ""; let goodHtml = "";
             servicesData.forEach(group => {
                 const div = group.group; const s = divStats[div].subs; const g = divStats[div].goods;
