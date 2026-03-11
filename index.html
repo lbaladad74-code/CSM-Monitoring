@@ -6,7 +6,6 @@
     <title>CSM Monitoring System</title>
     
     <style>
-        /* ... Keeping your sleek CSS from earlier ... */
         :root {
             --sidebar-bg: #0f172a; --sidebar-hover: #1e293b; --primary: #3b82f6;
             --background: #f8fafc; --surface: #ffffff; --text: #334155; --border: #cbd5e1;
@@ -41,11 +40,15 @@
         button { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px;}
         button:hover { background: #2563eb; }
         
-        /* Master Data Table Styles */
         .table-wrapper { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; font-size: 12px; white-space: nowrap; }
         th, td { padding: 10px; border: 1px solid var(--border); text-align: left; }
         th { background: var(--sidebar-bg); color: white; }
+        
+        .badge-onsite { background-color: #f59e0b; color: white; padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight: bold;}
+        .badge-online { background-color: #10b981; color: white; padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight: bold;}
+        
+        .section-divider { margin: 40px 0; border-top: 3px dashed var(--border); }
     </style>
 </head>
 <body>
@@ -69,37 +72,20 @@
 
         <div id="master-data" class="view-section active-section">
             <h1>Master Data Repository</h1>
-            <div class="card table-wrapper">
-                <table id="masterTable">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Control No.</th>
-                            <th>Client Type</th>
-                            <th>Sex</th>
-                            <th>Age</th>
-                            <th>Region</th>
-                            <th>Section/Unit</th>
-                            <th>Ref Code</th>
-                            <th>Service (CC)</th>
-                            <th>Service Availed</th>
-                            <th>Avg SQD</th>
-                            <th>Remarks</th>
-                        </tr>
-                    </thead>
-                    <tbody id="masterDataBody">
-                        </tbody>
-                </table>
-            </div>
-        </div>
-
-        <div id="onsite-consolidator" class="view-section">
-            <h1>Onsite Consolidator</h1>
+            <p style="color: #64748b; margin-top: -10px;">Encode all records here. Data will automatically distribute to the proper Consolidator tabs.</p>
+            
             <div class="card">
+                <h2>Data Input Form</h2>
                 <form id="csmForm">
-                    
-                    <h3>1. Client Demographics</h3>
+                    <h3>1. Entry Source & Demographics</h3>
                     <div class="grid-4">
+                        <div>
+                            <label style="color: #2563eb;">Data Source</label>
+                            <select id="dataSource" required style="border-color: #2563eb; border-width: 2px;">
+                                <option value="Onsite">Onsite (Walk-in/Manual)</option>
+                                <option value="Online">Online (Digital Submission)</option>
+                            </select>
+                        </div>
                         <div><label>Date</label><input type="date" id="date" required></div>
                         <div><label>Control No.</label><input type="text" id="controlNo" placeholder="e.g. CTRL-001" required></div>
                         <div><label>Client Type</label>
@@ -110,10 +96,7 @@
                             </select>
                         </div>
                         <div><label>Sex</label>
-                            <select id="sex" required>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                            </select>
+                            <select id="sex" required><option value="Male">Male</option><option value="Female">Female</option></select>
                         </div>
                         <div><label>Age</label><input type="number" id="age" min="1" max="120" required></div>
                         <div><label>Region of Origin</label><input type="text" id="region" value="Region I" required></div>
@@ -129,7 +112,7 @@
                                 <option value="Asset Management">Asset Management Section</option>
                                 <option value="Cash Unit">Cash Unit</option>
                                 <option value="Personnel Section">Personnel Section</option>
-                                </select>
+                            </select>
                         </div>
                         <div><label>Service Availed as per CC</label>
                             <select id="serviceCC" onchange="updateRefCode()" required>
@@ -141,12 +124,8 @@
                                 <option value="Payment of External and Internal Claims">Payment of External and Internal Claims</option>
                             </select>
                         </div>
-                        <div><label>Ref Code</label>
-                            <input type="text" id="refCode" placeholder="Auto-fills based on Service" readonly required>
-                        </div>
-                        <div><label>Actual Service Availed</label>
-                            <input type="text" id="actualService" placeholder="Specific service details..." required>
-                        </div>
+                        <div><label>Ref Code</label><input type="text" id="refCode" placeholder="Auto-fills based on Service" readonly required></div>
+                        <div><label>Actual Service Availed</label><input type="text" id="actualService" placeholder="Specific service details..." required></div>
                     </div>
 
                     <h3>3. Citizen's Charter & SQD</h3>
@@ -175,18 +154,81 @@
 
                     <h3>4. Comments / Remarks</h3>
                     <textarea id="remarks" placeholder="Enter comments, remarks, or suggestions here..."></textarea>
-
-                    <button type="submit" style="margin-top: 20px;">Save Transaction</button>
+                    <button type="submit" style="margin-top: 20px;">Save Record to Master Data</button>
                 </form>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <div class="card table-wrapper">
+                <h2>Master Data Table</h2>
+                <p style="margin-top: -15px; margin-bottom: 15px; font-size: 13px;">Complete view of all encoded inputs (Both Onsite and Online).</p>
+                <table id="masterTable">
+                    <thead>
+                        <tr>
+                            <th>Source</th>
+                            <th>Date</th>
+                            <th>Control No.</th>
+                            <th>Client Type</th>
+                            <th>Section/Unit</th>
+                            <th>Ref Code</th>
+                            <th>Avg SQD</th>
+                            <th>Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody id="masterDataBody"></tbody>
+                </table>
             </div>
         </div>
 
-        <div id="online-consolidator" class="view-section"><h1>Online Consolidator</h1><div class="card"><p>Online submissions view.</p></div></div>
+        <div id="onsite-consolidator" class="view-section">
+            <h1>Onsite Consolidator</h1>
+            <div class="card table-wrapper">
+                <p>Showing <strong>ONLY</strong> physical / walk-in records.</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Control No.</th>
+                            <th>Client Type</th>
+                            <th>Section/Unit</th>
+                            <th>Ref Code</th>
+                            <th>Avg SQD</th>
+                            <th>Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody id="onsiteDataBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="online-consolidator" class="view-section">
+            <h1>Online Consolidator</h1>
+            <div class="card table-wrapper">
+                <p>Showing <strong>ONLY</strong> digital submission records.</p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Control No.</th>
+                            <th>Client Type</th>
+                            <th>Section/Unit</th>
+                            <th>Ref Code</th>
+                            <th>Avg SQD</th>
+                            <th>Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody id="onlineDataBody"></tbody>
+                </table>
+            </div>
+        </div>
+
         <div id="report" class="view-section"><h1>Report</h1><div class="card"><p>Analytics and generation.</p></div></div>
         <div id="good-comments" class="view-section"><h1>Good Comments</h1><div class="card"><p>Positive feedback.</p></div></div>
     </main>
 
     <script type="module">
+        // --- 1. UI NAVIGATION ---
         window.switchTab = function(tabId) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active-section'));
             document.querySelectorAll('.nav-links li').forEach(el => el.classList.remove('active-nav'));
@@ -194,27 +236,20 @@
             document.getElementById('nav-' + tabId).classList.add('active-nav');
         };
 
-        // --- THE REF CODE AUTOMATION DICTIONARY ---
-        // This links the exact dropdown text to the reference code from your images
+        // --- 2. DICTIONARY FOR AUTO REF CODE ---
         const serviceDatabase = {
             "Issuance of Foreign Official Travel Authority": "1.1",
             "Issuance of Foreign Personal Travel Authority": "1.2",
             "BAC": "2.1",
             "Requisition of Supplies, Materials and Equipment": "3.a.1",
             "Payment of External and Internal Claims": "3.b.1"
-            // You can easily add the rest of your 100+ services here in this exact format!
         };
 
-        // This function triggers whenever the dropdown changes
         window.updateRefCode = function() {
-            const selectedService = document.getElementById('serviceCC').value;
-            const refInput = document.getElementById('refCode');
-            
-            // If the service is in our database, put the code in the box. Otherwise, leave it blank.
-            refInput.value = serviceDatabase[selectedService] || "";
+            document.getElementById('refCode').value = serviceDatabase[document.getElementById('serviceCC').value] || "";
         };
 
-        // --- FIREBASE SETUP ---
+        // --- 3. FIREBASE SETUP ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } 
         from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
@@ -231,7 +266,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // --- SUBMIT FORM ---
+        // --- 4. SUBMIT FORM ---
         document.getElementById('csmForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const sqdValues = {};
@@ -239,6 +274,7 @@
 
             try {
                 await addDoc(collection(db, "csm_master"), {
+                    source: document.getElementById('dataSource').value,
                     date: document.getElementById('date').value,
                     controlNo: document.getElementById('controlNo').value,
                     clientType: document.getElementById('clientType').value,
@@ -249,28 +285,31 @@
                     serviceCC: document.getElementById('serviceCC').value,
                     refCode: document.getElementById('refCode').value,
                     actualService: document.getElementById('actualService').value,
-                    cc: {
-                        cc1: document.getElementById('cc1').value,
-                        cc2: document.getElementById('cc2').value,
-                        cc3: document.getElementById('cc3').value
-                    },
+                    cc: { cc1: document.getElementById('cc1').value, cc2: document.getElementById('cc2').value, cc3: document.getElementById('cc3').value },
                     sqd: sqdValues,
                     remarks: document.getElementById('remarks').value,
                     timestamp: new Date()
                 });
                 
-                alert("Master Record Saved Successfully!");
+                alert("Record Saved Successfully!");
                 document.getElementById('csmForm').reset();
-                document.getElementById('refCode').value = ""; // Clear readonly field
+                document.getElementById('refCode').value = "";
+                document.getElementById('date').valueAsDate = new Date(); // Reset date
             } catch (error) {
                 console.error("Error saving to Firebase: ", error);
             }
         });
 
-        // --- READ AND POPULATE MASTER DATA TABLE ---
+        // --- 5. READ & DISTRIBUTE DATA IN REAL-TIME ---
         onSnapshot(query(collection(db, "csm_master"), orderBy("timestamp", "desc")), (snapshot) => {
-            const tbody = document.getElementById('masterDataBody');
-            tbody.innerHTML = ""; 
+            const masterBody = document.getElementById('masterDataBody');
+            const onsiteBody = document.getElementById('onsiteDataBody');
+            const onlineBody = document.getElementById('onlineDataBody');
+            
+            // Clear tables
+            masterBody.innerHTML = ""; 
+            onsiteBody.innerHTML = ""; 
+            onlineBody.innerHTML = ""; 
             
             snapshot.forEach((doc) => {
                 const data = doc.data();
@@ -282,22 +321,36 @@
                 }
                 let avg = valid > 0 ? (total / valid).toFixed(2) : "N/A";
 
-                const row = document.createElement("tr");
-                row.innerHTML = `
+                // Visual Badge for Master Table
+                const sourceBadge = data.source === 'Online' 
+                    ? `<span class="badge-online">Online</span>` 
+                    : `<span class="badge-onsite">Onsite</span>`;
+
+                // HTML for the columns (7 columns total for consolidators)
+                const specificColumnsHTML = `
                     <td>${data.date}</td>
                     <td>${data.controlNo}</td>
                     <td>${data.clientType}</td>
-                    <td>${data.sex}</td>
-                    <td>${data.age}</td>
-                    <td>${data.region}</td>
                     <td>${data.sectionUnit}</td>
                     <td><strong>${data.refCode}</strong></td>
-                    <td>${data.serviceCC}</td>
-                    <td>${data.actualService}</td>
                     <td style="color:#16a34a; font-weight:bold;">${avg}</td>
                     <td>${data.remarks || "-"}</td>
                 `;
-                tbody.appendChild(row);
+
+                // 1. Populate Master Table (Includes the Source Badge)
+                const masterRow = document.createElement("tr");
+                masterRow.innerHTML = `<td>${sourceBadge}</td>` + specificColumnsHTML;
+                masterBody.appendChild(masterRow);
+
+                // 2. Distribute to Onsite or Online Consolidators automatically
+                const specificRow = document.createElement("tr");
+                specificRow.innerHTML = specificColumnsHTML;
+
+                if (data.source === "Onsite") {
+                    onsiteBody.appendChild(specificRow);
+                } else if (data.source === "Online") {
+                    onlineBody.appendChild(specificRow);
+                }
             });
         });
         
