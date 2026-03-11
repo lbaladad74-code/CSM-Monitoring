@@ -68,6 +68,8 @@
         .chart-container { position: relative; height: 300px; width: 100%; }
         .dash-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-top: 20px; }
         .dash-sub-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        
+        .summary-card-header { background: #e2e8f0; padding: 10px; font-weight: bold; text-align: center; border-bottom: 2px solid var(--border); }
     </style>
 </head>
 <body>
@@ -80,7 +82,7 @@
             <li onclick="switchTab('onsite-consolidator')" id="nav-onsite-consolidator">Onsite Consolidator</li>
             <li onclick="switchTab('online-consolidator')" id="nav-online-consolidator">Online Consolidator</li>
             <li onclick="switchTab('report')" id="nav-report">Report</li>
-            <li onclick="switchTab('good-comments')" id="nav-good-comments">CSM Number&Comments Consolidation</li>
+            <li onclick="switchTab('good-comments')" id="nav-good-comments">Consolidations</li>
         </ul>
     </nav>
 
@@ -88,40 +90,21 @@
         
         <div id="dashboard" class="view-section active-section">
             <h1>Executive Dashboard</h1>
-            
             <div class="grid-2">
-                <div class="metric-card" style="border-left: 5px solid var(--primary);">
-                    <h3>Total CSM Submissions</h3>
-                    <h2 id="dashTotalSubs">0</h2>
-                </div>
-                <div class="metric-card" style="border-left: 5px solid #10b981;">
-                    <h3>Current Overall SQD Rating</h3>
-                    <h2 id="dashOverallScore">0%</h2>
-                </div>
+                <div class="metric-card" style="border-left: 5px solid var(--primary);"><h3>Total CSM Submissions</h3><h2 id="dashTotalSubs">0</h2></div>
+                <div class="metric-card" style="border-left: 5px solid #10b981;"><h3>Current Overall SQD Rating</h3><h2 id="dashOverallScore">0%</h2></div>
             </div>
-
             <div class="dash-grid">
-                <div class="card">
-                    <h3 style="margin-top: 0;">Traffic by Functional Division</h3>
-                    <div class="chart-container"><canvas id="divisionChart"></canvas></div>
-                </div>
-
+                <div class="card"><h3 style="margin-top: 0;">Traffic by Functional Division</h3><div class="chart-container"><canvas id="divisionChart"></canvas></div></div>
                 <div class="dash-sub-grid">
-                    <div class="card">
-                        <h3 style="margin-top: 0; text-align: center;">Submission Channels</h3>
-                        <div class="chart-container" style="height: 200px;"><canvas id="sourceChart"></canvas></div>
-                    </div>
-                    <div class="card">
-                        <h3 style="margin-top: 0; text-align: center;">Client Demographics</h3>
-                        <div class="chart-container" style="height: 200px;"><canvas id="clientChart"></canvas></div>
-                    </div>
+                    <div class="card"><h3 style="margin-top: 0; text-align: center;">Submission Channels</h3><div class="chart-container" style="height: 200px;"><canvas id="sourceChart"></canvas></div></div>
+                    <div class="card"><h3 style="margin-top: 0; text-align: center;">Client Demographics</h3><div class="chart-container" style="height: 200px;"><canvas id="clientChart"></canvas></div></div>
                 </div>
             </div>
         </div>
 
         <div id="master-data" class="view-section">
             <h1>Master Data Repository</h1>
-            
             <div class="card" id="formCard">
                 <h2 id="formTitle">Data Input Form</h2>
                 <form id="csmForm">
@@ -224,20 +207,66 @@
         <div id="good-comments" class="view-section">
             <h1>Quarterly Consolidations & Feedback</h1>
             
+            <div class="grid-3">
+                <div class="card" style="padding: 0; overflow: hidden;">
+                    <div class="summary-card-header">Client Type Tally</div>
+                    <table class="basic-table" style="border:none;">
+                        <tbody id="ctTallyBody"></tbody>
+                    </table>
+                </div>
+                <div class="card" style="padding: 0; overflow: hidden;">
+                    <div class="summary-card-header">Gender/Sex Tally</div>
+                    <table class="basic-table" style="border:none;">
+                        <tbody id="sexTallyBody"></tbody>
+                    </table>
+                </div>
+                <div class="card" style="padding: 0; overflow: hidden;">
+                    <div class="summary-card-header">Age Bracket Tally</div>
+                    <table class="basic-table" style="border:none;">
+                        <tbody id="ageTallyBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card table-wrapper" style="padding: 0; overflow: hidden; max-height: 400px; overflow-y: auto;">
+                    <div class="summary-card-header" style="position: sticky; top: 0; z-index: 10;">No. of Clients per Service</div>
+                    <table class="basic-table" style="border:none;">
+                        <thead><tr><th>Service Availed</th><th style="text-align:center;">Count</th></tr></thead>
+                        <tbody id="serviceTallyBody"></tbody>
+                    </table>
+                </div>
+                
+                <div class="card table-wrapper" style="padding: 0; overflow: hidden;">
+                    <div class="summary-card-header">Citizen's Charter (CC) Tally</div>
+                    <table class="basic-table" style="border:none; text-align: center;">
+                        <thead><tr><th style="text-align:left;">Question</th><th>Opt 1</th><th>Opt 2</th><th>Opt 3</th><th>Opt 4</th><th>Opt 5</th></tr></thead>
+                        <tbody id="ccTallyBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card table-wrapper" style="padding: 0; overflow: hidden;">
+                <div class="summary-card-header" style="background:#10b981; color:white;">No. per SQD & Overall Rating</div>
+                <table class="basic-table" style="border:none; text-align: center;">
+                    <thead>
+                        <tr>
+                            <th style="text-align:left;">Dimension</th>
+                            <th>Strongly Agree</th><th>Agree</th><th>Neither</th><th>Disagree</th><th>Strongly Disagree</th><th>N/A</th>
+                            <th style="background:#f1f5f9; font-weight:bold;">Overall Rating (Score)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sqdMasterTallyBody"></tbody>
+                </table>
+            </div>
+
+            <div class="section-divider"></div>
+
             <div class="card table-wrapper">
                 <h3 style="margin-top: 0; color: #0f172a;">Total CSM Submissions per Quarter</h3>
                 <p style="font-size: 13px; color: #64748b; margin-top: -5px;">Count of all forms received by division.</p>
                 <table class="basic-table">
-                    <thead>
-                        <tr>
-                            <th>Functional Division</th>
-                            <th style="text-align:center;">Q1 (Jan-Mar)</th>
-                            <th style="text-align:center;">Q2 (Apr-Jun)</th>
-                            <th style="text-align:center;">Q3 (Jul-Sep)</th>
-                            <th style="text-align:center;">Q4 (Oct-Dec)</th>
-                            <th style="text-align:center; background:#f1f5f9;">TOTAL</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>Functional Division</th><th style="text-align:center;">Q1 (Jan-Mar)</th><th style="text-align:center;">Q2 (Apr-Jun)</th><th style="text-align:center;">Q3 (Jul-Sep)</th><th style="text-align:center;">Q4 (Oct-Dec)</th><th style="text-align:center; background:#f1f5f9;">TOTAL</th></tr></thead>
                     <tbody id="subQuarterlyBody"></tbody>
                 </table>
             </div>
@@ -246,16 +275,7 @@
                 <h3 style="margin-top: 0; color: #16a34a;">Total Good Comments per Quarter</h3>
                 <p style="font-size: 13px; color: #64748b; margin-top: -5px;">Count of forms with an Average SQD of 4.00 (80%) or higher AND containing written remarks.</p>
                 <table class="basic-table">
-                    <thead>
-                        <tr>
-                            <th>Functional Division</th>
-                            <th style="text-align:center;">Q1 (Jan-Mar)</th>
-                            <th style="text-align:center;">Q2 (Apr-Jun)</th>
-                            <th style="text-align:center;">Q3 (Jul-Sep)</th>
-                            <th style="text-align:center;">Q4 (Oct-Dec)</th>
-                            <th style="text-align:center; background:#f1f5f9;">TOTAL</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>Functional Division</th><th style="text-align:center;">Q1 (Jan-Mar)</th><th style="text-align:center;">Q2 (Apr-Jun)</th><th style="text-align:center;">Q3 (Jul-Sep)</th><th style="text-align:center;">Q4 (Oct-Dec)</th><th style="text-align:center; background:#f1f5f9;">TOTAL</th></tr></thead>
                     <tbody id="goodQuarterlyBody"></tbody>
                 </table>
             </div>
@@ -263,9 +283,7 @@
             <div class="card table-wrapper">
                 <h3 style="margin-top: 0;">Positive Feedback Log</h3>
                 <table class="basic-table">
-                    <thead>
-                        <tr><th>Date</th><th>Functional Division</th><th>Service Availed</th><th>Avg SQD</th><th>Client Feedback</th></tr>
-                    </thead>
+                    <thead><tr><th>Date</th><th>Functional Division</th><th>Service Availed</th><th>Avg SQD</th><th>Client Feedback</th></tr></thead>
                     <tbody id="goodCommentsList"></tbody>
                 </table>
             </div>
@@ -373,7 +391,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // --- GLOBAL VARIABLES ---
         let globalCsmData = []; 
         let currentEditId = null; 
         let divisionChart, sourceChart, clientChart; 
@@ -497,7 +514,7 @@
             clientChart = new Chart(cliCtx, { type: 'doughnut', data: { labels: ['Citizen', 'Gov', 'Business', 'N/A'], datasets: [{ data: [cit, gov, bus, dns], backgroundColor: ['#3b82f6', '#8b5cf6', '#ec4899', '#cbd5e1'] }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '70%' } });
         }
 
-        // --- GOOD COMMENTS & REPORT PROCESSING ---
+        // --- REAL-TIME DATA PROCESSING & REPORT GENERATION ---
         const sqdScoreMap = { "STRONGLY AGREE": 5, "AGREE": 4, "NEITHER AGREE OR DISAGREE": 3, "DISAGREE": 2, "STRONGLY DISAGREE": 1 };
         function getInterpretation(score) {
             if (score >= 95.0) return "Outstanding";
@@ -510,49 +527,68 @@
         window.generateReport = function() {
             const totalResp = globalCsmData.length;
             document.getElementById('dashTotalSubs').innerText = totalResp;
-            
             const totalTrans = parseInt(document.getElementById('totalTransactionsInput').value) || totalResp;
             document.getElementById('repResponseRate').innerText = `${totalTrans > 0 ? ((totalResp / totalTrans) * 100).toFixed(2) : 0}%`;
 
             if (totalResp === 0) return;
+            
+            // Core counters
             let ccAwareCount = 0; let ccHelpfulCount = 0;
-            const sqdCounts = {}; for(let i=1; i<=8; i++) sqdCounts[i] = { SA:0, A:0, N:0, D:0, SD:0, NA:0 };
+            const sqdCounts = {}; for(let i=0; i<=8; i++) sqdCounts[i] = { SA:0, A:0, N:0, D:0, SD:0, NA:0 };
             let totalOverallSA_A = 0; let totalOverallValidResp = 0;
 
-            // --- Setup Tracking for Good Comments Tab ---
+            // Consolidation Tab Counters
+            const ctCounts = { "Citizen": 0, "Government": 0, "Business": 0, "Did Not Specify": 0 };
+            const sexCounts = { "Male": 0, "Female": 0, "Did not Specify": 0 };
+            const ageCounts = { "19 or Lower": 0, "20-34": 0, "35-49": 0, "50-64": 0, "65 or higher": 0, "DID NOT SPECIFY": 0 };
+            const svcCounts = {};
+            const ccTally = { 
+                cc1: { '1':0, '2':0, '3':0, '4':0 }, 
+                cc2: { '1':0, '2':0, '3':0, '4':0, '5':0 }, 
+                cc3: { '1':0, '2':0, '3':0, '4':0 } 
+            };
+
             const divStats = {};
-            servicesData.forEach(g => {
-                divStats[g.group] = {
-                    subs: { q1:0, q2:0, q3:0, q4:0, total:0 },
-                    goods: { q1:0, q2:0, q3:0, q4:0, total:0 }
-                };
-            });
+            servicesData.forEach(g => { divStats[g.group] = { subs: { q1:0, q2:0, q3:0, q4:0, total:0 }, goods: { q1:0, q2:0, q3:0, q4:0, total:0 } }; });
             const goodCommentsList = document.getElementById('goodCommentsList');
             goodCommentsList.innerHTML = "";
 
             globalCsmData.forEach(data => {
-                // Report Logic
+                // Demographics
+                if(ctCounts[data.clientType] !== undefined) ctCounts[data.clientType]++;
+                if(sexCounts[data.sex] !== undefined) sexCounts[data.sex]++;
+                if(ageCounts[data.age] !== undefined) ageCounts[data.age]++;
+                
+                // Services
+                if(data.serviceCC) svcCounts[data.serviceCC] = (svcCounts[data.serviceCC] || 0) + 1;
+
+                // CC Logic
                 if (['1','2','3'].includes(data.cc.cc1)) ccAwareCount++;
                 if (data.cc.cc3 === '1') ccHelpfulCount++;
                 
+                if(ccTally.cc1[data.cc.cc1] !== undefined) ccTally.cc1[data.cc.cc1]++;
+                if(ccTally.cc2[data.cc.cc2] !== undefined) ccTally.cc2[data.cc.cc2]++;
+                if(ccTally.cc3[data.cc.cc3] !== undefined) ccTally.cc3[data.cc.cc3]++;
+                
                 let tempTotalSqd = 0; let tempValidSqd = 0;
 
-                for(let i=1; i<=8; i++) {
+                // SQD Logic (0 to 8)
+                for(let i=0; i<=8; i++) {
                     const val = data.sqd[`sqd${i}`];
-                    if (val === "STRONGLY AGREE") { sqdCounts[i].SA++; totalOverallSA_A++; }
-                    else if (val === "AGREE") { sqdCounts[i].A++; totalOverallSA_A++; }
+                    if (val === "STRONGLY AGREE") { sqdCounts[i].SA++; if(i>0) totalOverallSA_A++; }
+                    else if (val === "AGREE") { sqdCounts[i].A++; if(i>0) totalOverallSA_A++; }
                     else if (val === "NEITHER AGREE OR DISAGREE") sqdCounts[i].N++;
                     else if (val === "DISAGREE") sqdCounts[i].D++;
                     else if (val === "STRONGLY DISAGREE") sqdCounts[i].SD++;
                     else if (val === "N/A") sqdCounts[i].NA++;
                     
-                    if (val !== "N/A" && val) {
+                    if (i>0 && val !== "N/A" && val) {
                         totalOverallValidResp++;
                         if(sqdScoreMap[val]) { tempTotalSqd += sqdScoreMap[val]; tempValidSqd++; }
                     }
                 }
 
-                // --- Quarterly Good Comments Logic ---
+                // Quarterly Good Comments Logic
                 const div = data.sectionUnit;
                 if(divStats[div]) {
                     const dateObj = new Date(data.date);
@@ -562,17 +598,14 @@
                     else if (month >= 6 && month <= 8) q = 'q3';
                     else if (month >= 9 && month <= 11) q = 'q4';
 
-                    divStats[div].subs[q]++;
-                    divStats[div].subs.total++;
+                    divStats[div].subs[q]++; divStats[div].subs.total++;
 
                     const avgScore = tempValidSqd > 0 ? (tempTotalSqd / tempValidSqd) : 0;
                     const hasRemark = data.remarks && data.remarks.trim() !== "";
-                    const isGood = hasRemark && avgScore >= 4; // Average 4 or higher (80%+)
+                    const isGood = hasRemark && avgScore >= 4; 
 
                     if (isGood) {
-                        divStats[div].goods[q]++;
-                        divStats[div].goods.total++;
-
+                        divStats[div].goods[q]++; divStats[div].goods.total++;
                         const tr = document.createElement('tr');
                         tr.innerHTML = `<td>${data.date}</td><td>${div}</td><td>${data.serviceCC}</td><td style="color:#16a34a;font-weight:bold;">${avgScore.toFixed(2)}</td><td><em>"${data.remarks}"</em></td>`;
                         goodCommentsList.appendChild(tr);
@@ -580,7 +613,7 @@
                 }
             });
 
-            // Update Report Tab UI
+            // 1. Output Top Metrics
             document.getElementById('repCcAwareness').innerText = `${((ccAwareCount / totalResp) * 100).toFixed(2)}%`;
             document.getElementById('repCcHelpfulness').innerText = `${((ccHelpfulCount / totalResp) * 100).toFixed(2)}%`;
             const overallScore = totalOverallValidResp > 0 ? ((totalOverallSA_A / totalOverallValidResp) * 100).toFixed(2) : 0;
@@ -588,15 +621,47 @@
             document.getElementById('repInterpretation').innerText = getInterpretation(overallScore);
             document.getElementById('dashOverallScore').innerText = `${overallScore}%`;
 
+            // 2. Output Report SQD Breakdown (SQD 1-8 only)
+            const sqdNames = ["SQD0", "SQD1 (Responsiveness)", "SQD2 (Reliability)", "SQD3 (Access & Facilities)", "SQD4 (Communication)", "SQD5 (Costs)", "SQD6 (Integrity)", "SQD7 (Assurance)", "SQD8 (Outcome)"];
             let tableHTML = "";
             for(let i=1; i<=8; i++) {
                 const c = sqdCounts[i]; const validResp = totalResp - c.NA;
                 const score = validResp > 0 ? (((c.SA + c.A) / validResp) * 100).toFixed(2) : 0;
-                tableHTML += `<tr><td><strong>SQD${i}</strong></td><td style="text-align:center;">${c.SA}</td><td style="text-align:center;">${c.A}</td><td style="text-align:center;">${c.N}</td><td style="text-align:center;">${c.D}</td><td style="text-align:center;">${c.SD}</td><td style="text-align:center;">${c.NA}</td><td style="text-align:center; font-weight:bold; color: #16a34a; background:#f1f5f9;">${score}%</td><td style="text-align:center; background:#f1f5f9;">${getInterpretation(score)}</td></tr>`;
+                tableHTML += `<tr><td><strong>${sqdNames[i]}</strong></td><td style="text-align:center;">${c.SA}</td><td style="text-align:center;">${c.A}</td><td style="text-align:center;">${c.N}</td><td style="text-align:center;">${c.D}</td><td style="text-align:center;">${c.SD}</td><td style="text-align:center;">${c.NA}</td><td style="text-align:center; font-weight:bold; color: #16a34a; background:#f1f5f9;">${score}%</td><td style="text-align:center; background:#f1f5f9;">${getInterpretation(score)}</td></tr>`;
             }
             document.getElementById('sqdReportBody').innerHTML = tableHTML;
+
+            // 3. Output Consolidations (Demographics, Services, CC, Master SQD)
+            document.getElementById('ctTallyBody').innerHTML = Object.entries(ctCounts).map(([k,v]) => `<tr><td>${k}</td><td style="font-weight:bold;text-align:right;">${v}</td></tr>`).join('');
+            document.getElementById('sexTallyBody').innerHTML = Object.entries(sexCounts).map(([k,v]) => `<tr><td>${k}</td><td style="font-weight:bold;text-align:right;">${v}</td></tr>`).join('');
+            document.getElementById('ageTallyBody').innerHTML = Object.entries(ageCounts).map(([k,v]) => `<tr><td>${k}</td><td style="font-weight:bold;text-align:right;">${v}</td></tr>`).join('');
             
-            // Update Good Comments Tab UI
+            // Sort Services by count descending
+            const sortedSvcs = Object.entries(svcCounts).sort((a,b) => b[1] - a[1]);
+            document.getElementById('serviceTallyBody').innerHTML = sortedSvcs.map(([k,v]) => `<tr><td>${k}</td><td style="font-weight:bold;text-align:center;">${v}</td></tr>`).join('');
+
+            document.getElementById('ccTallyBody').innerHTML = `
+                <tr><td style="text-align:left;font-weight:bold;">CC1</td><td>${ccTally.cc1['1']}</td><td>${ccTally.cc1['2']}</td><td>${ccTally.cc1['3']}</td><td>${ccTally.cc1['4']}</td><td>-</td></tr>
+                <tr><td style="text-align:left;font-weight:bold;">CC2</td><td>${ccTally.cc2['1']}</td><td>${ccTally.cc2['2']}</td><td>${ccTally.cc2['3']}</td><td>${ccTally.cc2['4']}</td><td>${ccTally.cc2['5']}</td></tr>
+                <tr><td style="text-align:left;font-weight:bold;">CC3</td><td>${ccTally.cc3['1']}</td><td>${ccTally.cc3['2']}</td><td>${ccTally.cc3['3']}</td><td>${ccTally.cc3['4']}</td><td>-</td></tr>
+            `;
+
+            // Master SQD Table (Includes SQD0)
+            let masterSqdHtml = "";
+            for(let i=0; i<=8; i++) {
+                const c = sqdCounts[i]; const validResp = totalResp - c.NA;
+                const score = validResp > 0 ? (((c.SA + c.A) / validResp) * 100).toFixed(2) : 0;
+                let ratingText = i===0 ? "-" : `${score}% (${getInterpretation(score)})`;
+                
+                masterSqdHtml += `<tr>
+                    <td style="text-align:left; font-weight:bold;">${sqdNames[i]}</td>
+                    <td>${c.SA}</td><td>${c.A}</td><td>${c.N}</td><td>${c.D}</td><td>${c.SD}</td><td style="color:#64748b;">${c.NA}</td>
+                    <td style="background:#f1f5f9; font-weight:bold; color: #10b981;">${ratingText}</td>
+                </tr>`;
+            }
+            document.getElementById('sqdMasterTallyBody').innerHTML = masterSqdHtml;
+            
+            // 4. Output Good Comments Quarterly Logic
             let subHtml = ""; let goodHtml = "";
             servicesData.forEach(group => {
                 const div = group.group; const s = divStats[div].subs; const g = divStats[div].goods;
@@ -609,8 +674,6 @@
             updateDashboardCharts();
         };
 
-        document.getElementById('totalTransactionsInput').addEventListener('input', window.generateReport);
-
         function buildTallyRow(data, id) {
             let r = `<td>${data.refCode}</td><td>${data.serviceCC}</td>`;
             r += `<td>${data.clientType==='Citizen'?'1':''}</td><td>${data.clientType==='Government'?'1':''}</td><td>${data.clientType==='Business'?'1':''}</td><td>${data.clientType==='Did Not Specify'?'1':''}</td>`;
@@ -621,7 +684,6 @@
             r += `<td>${c1==='1'?'1':''}</td><td>${c1==='2'?'1':''}</td><td>${c1==='3'?'1':''}</td><td>${c1==='4'?'1':''}</td>`;
             r += `<td>${c2==='1'?'1':''}</td><td>${c2==='2'?'1':''}</td><td>${c2==='3'?'1':''}</td><td>${c2==='4'?'1':''}</td><td>${c2==='5'?'1':''}</td>`;
             r += `<td>${c3==='1'?'1':''}</td><td>${c3==='2'?'1':''}</td><td>${c3==='3'?'1':''}</td><td>${c3==='4'?'1':''}</td>`;
-            
             for (let i = 0; i <= 8; i++) {
                 let s = data.sqd[`sqd${i}`];
                 r += `<td>${s==='STRONGLY AGREE'?'1':''}</td><td>${s==='AGREE'?'1':''}</td><td>${s==='NEITHER AGREE OR DISAGREE'?'1':''}</td><td>${s==='DISAGREE'?'1':''}</td><td>${s==='STRONGLY DISAGREE'?'1':''}</td><td>${s==='N/A'?'1':''}</td>`;
@@ -634,37 +696,26 @@
             const masterBody = document.getElementById('masterDataBody');
             const onsiteTally = document.getElementById('onsiteTallyBody');
             const onlineTally = document.getElementById('onlineTallyBody');
-            
             masterBody.innerHTML = ""; onsiteTally.innerHTML = ""; onlineTally.innerHTML = ""; 
             globalCsmData = []; 
-            
             snapshot.forEach((doc) => {
                 const data = doc.data(); data.id = doc.id; 
                 globalCsmData.push(data); 
-                
                 let total = 0, valid = 0;
                 for(let i=1; i<=8; i++) {
                     let val = data.sqd[`sqd${i}`];
                     if(val !== "N/A" && sqdScoreMap[val]) { total += sqdScoreMap[val]; valid++; }
                 }
                 let avg = valid > 0 ? (total / valid).toFixed(2) : "N/A";
-
                 const badge = data.source === 'Online' ? `<span class="badge-online">Online</span>` : `<span class="badge-onsite">Onsite</span>`;
                 const basicRow = document.createElement("tr");
-                
-                basicRow.innerHTML = `
-                    <td>${badge}</td><td>${data.date}</td><td>${data.controlNo}</td><td>${data.clientType}</td><td>${data.sectionUnit}</td><td><strong>${data.refCode}</strong></td><td style="color:#16a34a;font-weight:bold;">${avg}</td><td>${data.remarks || "-"}</td>
-                    <td><button class="action-btn" onclick="editRecord('${data.id}')" title="Edit">✏️</button><button class="action-btn" onclick="deleteRecord('${data.id}')" title="Delete">🗑️</button></td>
-                `;
+                basicRow.innerHTML = `<td>${badge}</td><td>${data.date}</td><td>${data.controlNo}</td><td>${data.clientType}</td><td>${data.sectionUnit}</td><td><strong>${data.refCode}</strong></td><td style="color:#16a34a;font-weight:bold;">${avg}</td><td>${data.remarks || "-"}</td><td><button class="action-btn" onclick="editRecord('${data.id}')" title="Edit">✏️</button><button class="action-btn" onclick="deleteRecord('${data.id}')" title="Delete">🗑️</button></td>`;
                 masterBody.appendChild(basicRow);
-
                 const tallyRow = document.createElement("tr");
                 tallyRow.innerHTML = buildTallyRow(data, data.id); 
-                
                 if (data.source === "Onsite") onsiteTally.appendChild(tallyRow);
                 else if (data.source === "Online") onlineTally.appendChild(tallyRow);
             });
-
             window.generateReport();
         });
         
