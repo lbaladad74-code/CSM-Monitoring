@@ -12,13 +12,13 @@
         }
 
         body { font-family: -apple-system, sans-serif; margin: 0; display: flex; height: 100vh; background: var(--background); color: var(--text); }
-        .sidebar { width: 260px; background: var(--sidebar-bg); color: white; display: flex; flex-direction: column; }
+        .sidebar { width: 260px; background: var(--sidebar-bg); color: white; display: flex; flex-direction: column; flex-shrink: 0;}
         .sidebar-header { padding: 20px; font-size: 20px; font-weight: bold; border-bottom: 1px solid #334155; text-align: center; }
         .nav-links { list-style: none; padding: 0; margin: 0; }
         .nav-links li { padding: 15px 20px; cursor: pointer; border-bottom: 1px solid #1e293b; transition: background 0.3s; }
         .nav-links li:hover, .nav-links li.active-nav { background: var(--sidebar-hover); border-left: 4px solid var(--primary); }
         
-        .main-content { flex: 1; padding: 30px; overflow-y: auto; }
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; width: calc(100vw - 260px); }
         .view-section { display: none; animation: fadeIn 0.3s; }
         .view-section.active-section { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -30,25 +30,31 @@
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
         .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 15px; }
         .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 15px; }
-        
         .sqd-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; background: #f8fafc; padding: 15px; border-radius: 6px; border: 1px solid var(--border); margin-bottom: 15px; }
         
         label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 12px; text-transform: uppercase; color: #475569;}
         input, select, textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 4px; box-sizing: border-box; font-size: 14px;}
         input[readonly] { background-color: #e2e8f0; color: #64748b; cursor: not-allowed; font-weight: bold;}
+        select optgroup { font-weight: bold; color: var(--primary); background-color: #f1f5f9;}
         
         button { background: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px;}
         button:hover { background: #2563eb; }
         
         .table-wrapper { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; font-size: 12px; white-space: nowrap; }
-        th, td { padding: 10px; border: 1px solid var(--border); text-align: left; }
-        th { background: var(--sidebar-bg); color: white; }
+        .basic-table { width: 100%; border-collapse: collapse; font-size: 12px; white-space: nowrap; }
+        .basic-table th, .basic-table td { padding: 10px; border: 1px solid var(--border); text-align: left; }
+        .basic-table th { background: var(--sidebar-bg); color: white; }
         
         .badge-onsite { background-color: #f59e0b; color: white; padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight: bold;}
         .badge-online { background-color: #10b981; color: white; padding: 4px 8px; border-radius: 12px; font-size: 10px; font-weight: bold;}
-        
         .section-divider { margin: 40px 0; border-top: 3px dashed var(--border); }
+
+        .mega-table-wrapper { width: 100%; overflow-x: auto; padding-bottom: 15px; }
+        .mega-table { border-collapse: collapse; font-size: 10px; text-align: center; white-space: nowrap; }
+        .mega-table th, .mega-table td { border: 1px solid #94a3b8; padding: 5px; }
+        .mega-table td { font-weight: bold; color: #0f172a; }
+        .bg-yellow { background-color: #fef08a !important; font-weight: bold; }
+        .bg-green { background-color: #bbf7d0 !important; font-weight: bold; color: #0f172a; }
     </style>
 </head>
 <body>
@@ -66,21 +72,17 @@
     </nav>
 
     <main class="main-content">
-        <div id="dashboard" class="view-section">
-            <h1>Dashboard</h1><div class="card"><p>System Overview</p></div>
-        </div>
+        <div id="dashboard" class="view-section"><h1>Dashboard</h1><div class="card"><p>System Overview</p></div></div>
 
         <div id="master-data" class="view-section active-section">
             <h1>Master Data Repository</h1>
-            <p style="color: #64748b; margin-top: -10px;">Encode all records here. Data will automatically distribute to the proper Consolidator tabs.</p>
             
             <div class="card">
                 <h2>Data Input Form</h2>
                 <form id="csmForm">
                     <h3>1. Entry Source & Demographics</h3>
                     <div class="grid-4">
-                        <div>
-                            <label style="color: #2563eb;">Data Source</label>
+                        <div><label style="color: #2563eb;">Data Source</label>
                             <select id="dataSource" required style="border-color: #2563eb; border-width: 2px;">
                                 <option value="Onsite">Onsite (Walk-in/Manual)</option>
                                 <option value="Online">Online (Digital Submission)</option>
@@ -88,18 +90,10 @@
                         </div>
                         <div><label>Date</label><input type="date" id="date" required></div>
                         <div><label>Control No.</label><input type="text" id="controlNo" placeholder="e.g. CTRL-001" required></div>
-                        <div><label>Client Type</label>
-                            <select id="clientType" required>
-                                <option value="Citizen">Citizen</option>
-                                <option value="Business">Business</option>
-                                <option value="Government">Government</option>
-                            </select>
-                        </div>
-                        <div><label>Sex</label>
-                            <select id="sex" required><option value="Male">Male</option><option value="Female">Female</option></select>
-                        </div>
-                        <div><label>Age</label><input type="number" id="age" min="1" max="120" required></div>
-                        <div><label>Region of Origin</label><input type="text" id="region" value="Region I" required></div>
+                        <div><label>Client Type</label><select id="clientType" required><option value="">Select...</option><option value="Citizen">Citizen</option><option value="Government">Government</option><option value="Business">Business</option><option value="Did Not Specify">Did Not Specify</option></select></div>
+                        <div><label>Sex</label><select id="sex" required><option value="">Select...</option><option value="Male">Male</option><option value="Female">Female</option><option value="Did not Specify">Did not Specify</option></select></div>
+                        <div><label>Age Bracket</label><select id="age" required><option value="">Select...</option><option value="19 or Lower">19 or Lower</option><option value="20-34">20-34</option><option value="35-49">35-49</option><option value="50-64">50-64</option><option value="65 or higher">65 or higher</option><option value="DID NOT SPECIFY">DID NOT SPECIFY</option></select></div>
+                        <div><label>Region of Residence</label><select id="region" required><option value="">Select...</option><option value="1">1</option><option value="Did not specify">Did not specify</option></select></div>
                     </div>
 
                     <h3>2. Transaction Details</h3>
@@ -107,45 +101,50 @@
                         <div><label>Section / Unit</label>
                             <select id="sectionUnit" required>
                                 <option value="">Select Unit...</option>
-                                <option value="ORD">Office of the Regional Director (ORD)</option>
-                                <option value="OARD">Office of the Asst. Regional Director</option>
-                                <option value="Asset Management">Asset Management Section</option>
-                                <option value="Cash Unit">Cash Unit</option>
-                                <option value="Personnel Section">Personnel Section</option>
+                                <option value="Office of the Regional Director">Office of the Regional Director</option>
+                                <option value="Office of the Assistant Regional Director">Office of the Assistant Regional Director</option>
+                                <option value="Administrative Division">Administrative Division</option>
+                                <option value="Curriculum and Learning Management Division">Curriculum and Learning Management</option>
+                                <option value="Education Support Services Division">Education Support Services</option>
+                                <option value="Finance Division">Finance Division</option>
+                                <option value="Field Technical Assistance Division">Field Technical Assistance</option>
+                                <option value="Human Resource Development Division">Human Resource Development</option>
+                                <option value="Policy, Planning and Research Division">Policy, Planning and Research</option>
+                                <option value="Quality Assurance Division">Quality Assurance</option>
                             </select>
                         </div>
                         <div><label>Service Availed as per CC</label>
                             <select id="serviceCC" onchange="updateRefCode()" required>
                                 <option value="">Select Service...</option>
-                                <option value="Issuance of Foreign Official Travel Authority">Issuance of Foreign Official Travel Authority</option>
-                                <option value="Issuance of Foreign Personal Travel Authority">Issuance of Foreign Personal Travel Authority</option>
-                                <option value="BAC">BAC</option>
-                                <option value="Requisition of Supplies, Materials and Equipment">Requisition of Supplies, Materials and Equipment</option>
-                                <option value="Payment of External and Internal Claims">Payment of External and Internal Claims</option>
                             </select>
                         </div>
-                        <div><label>Ref Code</label><input type="text" id="refCode" placeholder="Auto-fills based on Service" readonly required></div>
-                        <div><label>Actual Service Availed</label><input type="text" id="actualService" placeholder="Specific service details..." required></div>
+                        <div><label>Ref Code</label><input type="text" id="refCode" readonly required></div>
+                        <div><label>Actual Service Availed</label><input type="text" id="actualService" required></div>
                     </div>
 
                     <h3>3. Citizen's Charter & SQD</h3>
                     <div class="grid-3">
-                        <div><label>CC1</label><select id="cc1"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div>
-                        <div><label>CC2</label><select id="cc2"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
-                        <div><label>CC3</label><select id="cc3"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div>
+                        <div><label>CC1</label><select id="cc1" required><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div>
+                        <div><label>CC2</label><select id="cc2" required><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select></div>
+                        <div><label>CC3</label><select id="cc3" required><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div>
                     </div>
 
                     <div class="sqd-grid">
                         <script>
-                            const sqdLabels = ["SQD0", "SQD1", "SQD2", "SQD3", "SQD4", "SQD5", "SQD6", "SQD7", "SQD8"];
+                            const sqdLabels = [
+                                "SQD0", "SQD1 (Responsiveness)", "SQD2 (Reliability)", 
+                                "SQD3 (Access & Facilities)", "SQD4 (Communication)", 
+                                "SQD5 (Costs)", "SQD6 (Integrity)", "SQD7 (Assurance)", "SQD8 (Outcome)"
+                            ];
                             sqdLabels.forEach((label, index) => {
                                 document.write(`<div><label>${label}</label>
-                                    <select id="sqd${index}">
-                                        <option value="5">5 - Strongly Agree</option>
-                                        <option value="4">4 - Agree</option>
-                                        <option value="3">3 - Neither</option>
-                                        <option value="2">2 - Disagree</option>
-                                        <option value="1">1 - Strongly Disagree</option>
+                                    <select id="sqd${index}" required>
+                                        <option value="">Select...</option>
+                                        <option value="STRONGLY AGREE">STRONGLY AGREE</option>
+                                        <option value="AGREE">AGREE</option>
+                                        <option value="NEITHER AGREE OR DISAGREE">NEITHER AGREE OR DISAGREE</option>
+                                        <option value="DISAGREE">DISAGREE</option>
+                                        <option value="STRONGLY DISAGREE">STRONGLY DISAGREE</option>
                                         <option value="N/A">N/A</option>
                                     </select></div>`);
                             });
@@ -153,7 +152,7 @@
                     </div>
 
                     <h3>4. Comments / Remarks</h3>
-                    <textarea id="remarks" placeholder="Enter comments, remarks, or suggestions here..."></textarea>
+                    <textarea id="remarks"></textarea>
                     <button type="submit" style="margin-top: 20px;">Save Record to Master Data</button>
                 </form>
             </div>
@@ -161,66 +160,22 @@
             <div class="section-divider"></div>
 
             <div class="card table-wrapper">
-                <h2>Master Data Table</h2>
-                <p style="margin-top: -15px; margin-bottom: 15px; font-size: 13px;">Complete view of all encoded inputs (Both Onsite and Online).</p>
-                <table id="masterTable">
-                    <thead>
-                        <tr>
-                            <th>Source</th>
-                            <th>Date</th>
-                            <th>Control No.</th>
-                            <th>Client Type</th>
-                            <th>Section/Unit</th>
-                            <th>Ref Code</th>
-                            <th>Avg SQD</th>
-                            <th>Remarks</th>
-                        </tr>
-                    </thead>
+                <h2>Master Data Table (Basic Overview)</h2>
+                <table class="basic-table" id="masterTable">
+                    <thead><tr><th>Source</th><th>Date</th><th>Control No.</th><th>Client Type</th><th>Section/Unit</th><th>Ref Code</th><th>Avg SQD</th><th>Remarks</th></tr></thead>
                     <tbody id="masterDataBody"></tbody>
                 </table>
             </div>
         </div>
 
         <div id="onsite-consolidator" class="view-section">
-            <h1>Onsite Consolidator</h1>
-            <div class="card table-wrapper">
-                <p>Showing <strong>ONLY</strong> physical / walk-in records.</p>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Control No.</th>
-                            <th>Client Type</th>
-                            <th>Section/Unit</th>
-                            <th>Ref Code</th>
-                            <th>Avg SQD</th>
-                            <th>Remarks</th>
-                        </tr>
-                    </thead>
-                    <tbody id="onsiteDataBody"></tbody>
-                </table>
-            </div>
+            <h1>Onsite Consolidator Tally</h1>
+            <div class="card mega-table-wrapper" id="onsiteTableContainer"></div>
         </div>
 
         <div id="online-consolidator" class="view-section">
-            <h1>Online Consolidator</h1>
-            <div class="card table-wrapper">
-                <p>Showing <strong>ONLY</strong> digital submission records.</p>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Control No.</th>
-                            <th>Client Type</th>
-                            <th>Section/Unit</th>
-                            <th>Ref Code</th>
-                            <th>Avg SQD</th>
-                            <th>Remarks</th>
-                        </tr>
-                    </thead>
-                    <tbody id="onlineDataBody"></tbody>
-                </table>
-            </div>
+            <h1>Online Consolidator Tally</h1>
+            <div class="card mega-table-wrapper" id="onlineTableContainer"></div>
         </div>
 
         <div id="report" class="view-section"><h1>Report</h1><div class="card"><p>Analytics and generation.</p></div></div>
@@ -228,7 +183,7 @@
     </main>
 
     <script type="module">
-        // --- 1. UI NAVIGATION ---
+        // --- UI NAVIGATION ---
         window.switchTab = function(tabId) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active-section'));
             document.querySelectorAll('.nav-links li').forEach(el => el.classList.remove('active-nav'));
@@ -236,20 +191,105 @@
             document.getElementById('nav-' + tabId).classList.add('active-nav');
         };
 
-        // --- 2. DICTIONARY FOR AUTO REF CODE ---
-        const serviceDatabase = {
-            "Issuance of Foreign Official Travel Authority": "1.1",
-            "Issuance of Foreign Personal Travel Authority": "1.2",
-            "BAC": "2.1",
-            "Requisition of Supplies, Materials and Equipment": "3.a.1",
-            "Payment of External and Internal Claims": "3.b.1"
+        // --- FULL SERVICES DATABASE LIST ---
+        const servicesData = [
+            { group: "1.0 OFFICE OF THE REGIONAL DIRECTOR", items: [{ ref: "1.1", name: "Issuance of Foreign Official Travel Authority" }, { ref: "1.2", name: "Issuance of Foreign Personnal Travel Authority" }, { ref: "1.3", name: "Other Inquiries / Request" }] },
+            { group: "2.0 OFFICE OF THE ASSISTANT REGIONAL DIRECTOR", items: [{ ref: "2.1", name: "BAC" }, { ref: "2.2", name: "Other Transactions" }] },
+            { group: "3.a Asset Management Section", items: [{ ref: "3.a.1", name: "Requisition of Supplies, Materials and Equipment" }, { ref: "3.a.2", name: "Acceptance of Deliveries" }, { ref: "3.a.3", name: "Other Transactions" }] },
+            { group: "3.b Cash unit", items: [{ ref: "3.b.1", name: "Payment of External and Internal Claims" }, { ref: "3.b.2", name: "Payment of Obligation" }, { ref: "3.b.3", name: "Handling of Cash Advances" }, { ref: "3.b.4", name: "Other Transactions" }] },
+            { group: "3.c General Services Unit", items: [{ ref: "3.c.1", name: "Services provided to offices" }, { ref: "3.c.2", name: "Other Inquiries/Requests" }] },
+            { group: "3.d Personnel Section", items: [{ ref: "3.d.1", name: "Acceptance of Employment (Walk-in)" }, { ref: "3.d.2", name: "Acceptance of Employment (Online)" }, { ref: "3.d.3", name: "Issuance of Certificate of Last Payment" }, { ref: "3.d.4", name: "Application for Leave" }, { ref: "3.d.5", name: "Application for Retirement/ Survivorship/Disability Benefit" }, { ref: "3.d.6", name: "Issuance of Certificate for Remittances" }, { ref: "3.d.7", name: "Issuance of Certificate of Employment and/or Service Record" }, { ref: "3.d.8", name: "Issuance of Foreign Official Travel Authority" }, { ref: "3.d.9", name: "Issuance of Foreign Personal Travel Authority" }, { ref: "3.d.10", name: "Processing of Equivalent Record Form (ERF)" }, { ref: "3.d.11", name: "Processing of Study Leave" }, { ref: "3.d.12", name: "Processing of Terminal Leave Benefits" }, { ref: "3.d.13", name: "Request for Transfer from Another Region" }, { ref: "3.d.14", name: "Other Inquiries/Requests" }, { ref: "3.d.15", name: "Other Transactions" }] },
+            { group: "3.e Procurement Unit", items: [{ ref: "3.e.1", name: "BAC/Procurement-related transactions" }] },
+            { group: "3.f Records Section", items: [{ ref: "3.f.1", name: "Certification, Authenthication and Verification" }, { ref: "3.f.2", name: "Issuance of Requested Documents (CTC and Photocopy of Documents)" }, { ref: "3.f.3", name: "Issuance of Requested Documents (Non-CTC)" }, { ref: "3.f.4", name: "Receiving of Communication" }, { ref: "3.f.5", name: "Receiving of Complaint" }, { ref: "3.f.6", name: "Document Routing and Tracking using the Documented Management System" }, { ref: "3.f.7", name: "Other Requests/Inquiries" }] },
+            { group: "3.g Regional Payroll Services Unit", items: [{ ref: "3.g.1", name: "Stoppage/ Deletion of Deductions in the Payroll (Loans and Insurances)" }, { ref: "3.g.2", name: "Request for Copy of Payslip" }, { ref: "3.g.3", name: "Submission of billing from Private Kending Instituitions" }, { ref: "3.g.4", name: "Other Requests/Inquiries" }] },
+            { group: "4.0 CURRICULUM AND LEARNING MANAGEMENT DIVISION", items: [{ ref: "4.1", name: "Joint Delivery Voucher Program (JDVP)" }, { ref: "4.2", name: "Inquiries/ Feedback" }, { ref: "4.3", name: "Other Requests/Inquiries" }, { ref: "4.4", name: "Other Transactions" }] },
+            { group: "5.0 CLMD - LEARNING RESOURCE MANAGEMENT SECTION", items: [{ ref: "5.1", name: "Access to LRMDS Portal" }, { ref: "5.2", name: "Procedure for the Use of LRMDS Computers" }, { ref: "5.3", name: "Development and Quality Assurance of Learning Materials" }, { ref: "5.4", name: "Borrowing of Books/Learning Materials" }, { ref: "5.5", name: "Other Transactions" }] },
+            { group: "6.0 EDUCATION SUPPORT SERVICES DIVISION", items: [{ ref: "6.1", name: "School Facilities" }, { ref: "6.2", name: "School Health and Nutrition Services" }, { ref: "6.3", name: "Other Services" }] },
+            { group: "7.0 FINANCE DIVISION", items: [{ ref: "7.a.1", name: "Certification as to Availability of Funds" }, { ref: "7.a.2", name: "Endorsement of Request for Cash Allocation from SDOs" }, { ref: "7.a.3", name: "Other Requests/Inquiries" }, { ref: "7.a.4", name: "Other Transactions" }, { ref: "7.b.1", name: "Disbursement Updating" }, { ref: "7.b.2", name: "Downloading/Fund Transfers of SAROs received from Central Office to School Division Office and Implementing Units" }, { ref: "7.b.3", name: "Letter of Acceptance for Downloaded Funds" }, { ref: "7.b.4", name: "Obligation of Expenditure (Incurrence of Obligation Charged to Approved Budget Allocation per GAARD and Other Budget Laws / Authority)" }, { ref: "7.b.5", name: "Processing of Budget Utilization Request & Status (BURS)" }, { ref: "7.b.6", name: "Other Inquiries/Requests" }, { ref: "7.b.7", name: "Other Transactions" }] },
+            { group: "8.0 FIELD TECHNICAL ASSISTANCE DIVISION", items: [{ ref: "8.1", name: "Provision of Technical Assistance" }, { ref: "8.2", name: "Other Transactions" }] },
+            { group: "9.0 Human Resource Development Division", items: [{ ref: "9.1", name: "Rewards and Recognitions" }, { ref: "9.2", name: "Other Transactions" }] },
+            { group: "10.0 National Educators Academy of the Philippines (NEAP-R1)", items: [{ ref: "10.1", name: "Recognition of Professional Development Programs / Courses" }, { ref: "10.2", name: "Use of Venue; Trainings Provided/Facilitated" }, { ref: "10.3", name: "Others" }] },
+            { group: "11.0 ORD - ICTU", items: [{ ref: "11.1", name: "Troubleshooting of  ICT Equipmnet" }, { ref: "11.2", name: "Other Requests/Inquiries" }] },
+            { group: "12.0 ORD-Legal Unit", items: [{ ref: "12.1", name: "Legal Assistance to Walk-in Clients" }, { ref: "12.2", name: "Request for Correction of  Entries in School Record" }, { ref: "12.3", name: "Request for Certification as to the Pendency or Non-Pendency of an Administrative Case" }, { ref: "12.4", name: "Other Transactions" }] },
+            { group: "13.0 ORD- Public Affairs Unit", items: [{ ref: "13.1", name: "Public Assistance (Email)" }, { ref: "13.2", name: "Public assistance (Hotline and Walk-in)" }, { ref: "13.3", name: "Standard Freedom of Information Request through Walk-In Facility and Mail" }, { ref: "13.4", name: "Processing of communication received through the Public Assistance Action Center (PAAC)" }, { ref: "13.5", name: "Other Transactions" }] },
+            { group: "14.0 Policy, Planning and Research Division", items: [{ ref: "14.1", name: "Generation of School IDs for New Schools and/or Adding or Updating of SHS Program Offering" }, { ref: "14.2", name: "Request for Reversion" }, { ref: "14.3", name: "Request for Basic Education Data" }, { ref: "14.4", name: "Other Transactions" }] },
+            { group: "15.0 Quality Assurance Division", items: [{ ref: "15.1", name: "Application for Opening/Additional Offering of SHS Program for Private Schools" }, { ref: "15.2", name: "Application for Tuition and Other School Fees (TOSF), No Increase, and Proposed New Fees of Private Schools" }, { ref: "15.3", name: "Issuance of Special Orders for the Graduation of Private School Learners" }, { ref: "15.4", name: "Application for Establishment, Merging, Conversion, and Naming/Renaming of Public Schools and Separation of Public Schools" }, { ref: "15.5", name: "Application of Government Permit to Operate" }, { ref: "15.6", name: "Application for Renewal of Government Permit to Operate" }, { ref: "15.7", name: "Application for Government Recognition" }, { ref: "15.8", name: "Other Transactions" }] }
+        ];
+
+        // This populates the dropdown automatically on load
+        window.onload = function() {
+            const selectElement = document.getElementById('serviceCC');
+            servicesData.forEach(group => {
+                const optgroup = document.createElement('optgroup');
+                optgroup.label = group.group;
+                group.items.forEach(item => {
+                    const option = document.createElement('option');
+                    // We combine Ref and Name so we can extract BOTH later to prevent collisions
+                    option.value = `${item.ref}|||${item.name}`;
+                    option.textContent = item.name;
+                    optgroup.appendChild(option);
+                });
+                selectElement.appendChild(optgroup);
+            });
         };
 
+        // Automatic Ref Code assigner
         window.updateRefCode = function() {
-            document.getElementById('refCode').value = serviceDatabase[document.getElementById('serviceCC').value] || "";
+            const select = document.getElementById('serviceCC');
+            const refInput = document.getElementById('refCode');
+            if (select.value) {
+                // Split the combination to only show the Ref Code in the box
+                refInput.value = select.value.split('|||')[0];
+            } else {
+                refInput.value = "";
+            }
         };
 
-        // --- 3. FIREBASE SETUP ---
+        // --- MEGA TABLE GENERATOR ---
+        function generateMegaTableHTML(tbodyId) {
+            let sqdHeaders = '';
+            let sqdSubHeaders = '';
+            const sqdNames = ["SQD0", "SQD1 (RESPONSIVENESS)", "SQD2 (RELIABILITY)", "SQD3 (ACCESS AND FACILITIES)", "SQD4 (COMMUNICATION)", "SQD5 (COSTS)", "SQD6 (INTEGRITY)", "SQD7 (ASSURANCE)", "SQD8 (OUTCOME)"];
+            
+            sqdNames.forEach(name => {
+                sqdHeaders += `<th colspan="6" class="bg-green">${name}</th>`;
+                sqdSubHeaders += `<th class="bg-green">STRONGLY AGREE</th><th class="bg-green">AGREE</th><th class="bg-green">NEITHER AGREE OR DISAGREE</th><th class="bg-green">DISAGREE</th><th class="bg-green">STRONGLY DISAGREE</th><th class="bg-green">N/A</th>`;
+            });
+
+            return `
+                <table class="mega-table">
+                    <thead>
+                        <tr>
+                            <th rowspan="3" class="bg-yellow">Ref Code</th>
+                            <th rowspan="3" class="bg-yellow">Service availed as per Citizen's Charter</th>
+                            <th colspan="4" class="bg-green">CLIENT TYPE</th>
+                            <th colspan="3" class="bg-green">SEX</th>
+                            <th colspan="6" class="bg-green">AGE</th>
+                            <th rowspan="3" class="bg-green">REGION OF RESIDENCE</th>
+                            <th colspan="13" class="bg-green">CITIZEN'S CHARTER</th>
+                            ${sqdHeaders}
+                        </tr>
+                        <tr>
+                            <th rowspan="2" class="bg-green">CITIZEN</th><th rowspan="2" class="bg-green">GOVERNMENT</th><th rowspan="2" class="bg-green">BUSINESS</th><th rowspan="2" class="bg-green">DID NOT SPECIFY</th>
+                            <th rowspan="2" class="bg-green">MALE</th><th rowspan="2" class="bg-green">FEMALE</th><th rowspan="2" class="bg-green">DID NOT SPECIFY</th>
+                            <th rowspan="2" class="bg-green">19 or Lower</th><th rowspan="2" class="bg-green">20-34</th><th rowspan="2" class="bg-green">35-49</th><th rowspan="2" class="bg-green">50-64</th><th rowspan="2" class="bg-green">65 or higher</th><th rowspan="2" class="bg-green">DID NOT SPECIFY</th>
+                            <th colspan="4" class="bg-green">CC1</th><th colspan="5" class="bg-green">CC2</th><th colspan="4" class="bg-green">CC3</th>
+                        </tr>
+                        <tr>
+                            <th class="bg-green">1</th><th class="bg-green">2</th><th class="bg-green">3</th><th class="bg-green">4</th>
+                            <th class="bg-green">1</th><th class="bg-green">2</th><th class="bg-green">3</th><th class="bg-green">4</th><th class="bg-green">5</th>
+                            <th class="bg-green">1</th><th class="bg-green">2</th><th class="bg-green">3</th><th class="bg-green">4</th>
+                            ${sqdSubHeaders}
+                        </tr>
+                    </thead>
+                    <tbody id="${tbodyId}"></tbody>
+                </table>`;
+        }
+
+        document.getElementById('onsiteTableContainer').innerHTML = generateMegaTableHTML('onsiteTallyBody');
+        document.getElementById('onlineTableContainer').innerHTML = generateMegaTableHTML('onlineTallyBody');
+
+        // --- FIREBASE SETUP ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy } 
         from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
@@ -266,11 +306,15 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // --- 4. SUBMIT FORM ---
+        // --- SUBMIT DATA ---
         document.getElementById('csmForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const sqdValues = {};
             for(let i=0; i<=8; i++) sqdValues[`sqd${i}`] = document.getElementById(`sqd${i}`).value;
+
+            // Extract the pure Service Name from the combined value
+            const serviceCombined = document.getElementById('serviceCC').value;
+            const cleanServiceName = serviceCombined ? serviceCombined.split('|||')[1] : "";
 
             try {
                 await addDoc(collection(db, "csm_master"), {
@@ -282,7 +326,7 @@
                     age: document.getElementById('age').value,
                     region: document.getElementById('region').value,
                     sectionUnit: document.getElementById('sectionUnit').value,
-                    serviceCC: document.getElementById('serviceCC').value,
+                    serviceCC: cleanServiceName, // <--- Saving the clean text to Firebase
                     refCode: document.getElementById('refCode').value,
                     actualService: document.getElementById('actualService').value,
                     cc: { cc1: document.getElementById('cc1').value, cc2: document.getElementById('cc2').value, cc3: document.getElementById('cc3').value },
@@ -290,71 +334,77 @@
                     remarks: document.getElementById('remarks').value,
                     timestamp: new Date()
                 });
-                
                 alert("Record Saved Successfully!");
                 document.getElementById('csmForm').reset();
                 document.getElementById('refCode').value = "";
-                document.getElementById('date').valueAsDate = new Date(); // Reset date
-            } catch (error) {
-                console.error("Error saving to Firebase: ", error);
-            }
+                document.getElementById('date').valueAsDate = new Date();
+            } catch (error) { console.error(error); }
         });
 
-        // --- 5. READ & DISTRIBUTE DATA IN REAL-TIME ---
+        // --- REAL-TIME DATA PROCESSING ---
+        const sqdScoreMap = {
+            "STRONGLY AGREE": 5, "AGREE": 4, "NEITHER AGREE OR DISAGREE": 3, 
+            "DISAGREE": 2, "STRONGLY DISAGREE": 1
+        };
+
+        function buildTallyRow(data) {
+            let r = `<td>${data.refCode}</td><td>${data.serviceCC}</td>`;
+
+            r += `<td>${data.clientType==='Citizen'?'1':''}</td><td>${data.clientType==='Government'?'1':''}</td><td>${data.clientType==='Business'?'1':''}</td><td>${data.clientType==='Did Not Specify'?'1':''}</td>`;
+            r += `<td>${data.sex==='Male'?'1':''}</td><td>${data.sex==='Female'?'1':''}</td><td>${data.sex==='Did not Specify'?'1':''}</td>`;
+            r += `<td>${data.age==='19 or Lower'?'1':''}</td><td>${data.age==='20-34'?'1':''}</td><td>${data.age==='35-49'?'1':''}</td><td>${data.age==='50-64'?'1':''}</td><td>${data.age==='65 or higher'?'1':''}</td><td>${data.age==='DID NOT SPECIFY'?'1':''}</td>`;
+            r += `<td>${data.region || ''}</td>`;
+
+            let c1 = data.cc.cc1, c2 = data.cc.cc2, c3 = data.cc.cc3;
+            r += `<td>${c1==='1'?'1':''}</td><td>${c1==='2'?'1':''}</td><td>${c1==='3'?'1':''}</td><td>${c1==='4'?'1':''}</td>`;
+            r += `<td>${c2==='1'?'1':''}</td><td>${c2==='2'?'1':''}</td><td>${c2==='3'?'1':''}</td><td>${c2==='4'?'1':''}</td><td>${c2==='5'?'1':''}</td>`;
+            r += `<td>${c3==='1'?'1':''}</td><td>${c3==='2'?'1':''}</td><td>${c3==='3'?'1':''}</td><td>${c3==='4'?'1':''}</td>`;
+
+            for (let i = 0; i <= 8; i++) {
+                let s = data.sqd[`sqd${i}`];
+                r += `<td>${s==='STRONGLY AGREE'?'1':''}</td><td>${s==='AGREE'?'1':''}</td><td>${s==='NEITHER AGREE OR DISAGREE'?'1':''}</td><td>${s==='DISAGREE'?'1':''}</td><td>${s==='STRONGLY DISAGREE'?'1':''}</td><td>${s==='N/A'?'1':''}</td>`;
+            }
+
+            return `<tr>${r}</tr>`;
+        }
+
         onSnapshot(query(collection(db, "csm_master"), orderBy("timestamp", "desc")), (snapshot) => {
             const masterBody = document.getElementById('masterDataBody');
-            const onsiteBody = document.getElementById('onsiteDataBody');
-            const onlineBody = document.getElementById('onlineDataBody');
+            const onsiteTally = document.getElementById('onsiteTallyBody');
+            const onlineTally = document.getElementById('onlineTallyBody');
             
-            // Clear tables
-            masterBody.innerHTML = ""; 
-            onsiteBody.innerHTML = ""; 
-            onlineBody.innerHTML = ""; 
+            masterBody.innerHTML = ""; onsiteTally.innerHTML = ""; onlineTally.innerHTML = ""; 
             
             snapshot.forEach((doc) => {
                 const data = doc.data();
                 
-                // Calculate Avg SQD
                 let total = 0, valid = 0;
                 for(let i=1; i<=8; i++) {
-                    if(data.sqd[`sqd${i}`] !== "N/A") { total += parseInt(data.sqd[`sqd${i}`]); valid++; }
+                    let val = data.sqd[`sqd${i}`];
+                    if(val !== "N/A" && sqdScoreMap[val]) { 
+                        total += sqdScoreMap[val]; 
+                        valid++; 
+                    }
                 }
                 let avg = valid > 0 ? (total / valid).toFixed(2) : "N/A";
 
-                // Visual Badge for Master Table
-                const sourceBadge = data.source === 'Online' 
-                    ? `<span class="badge-online">Online</span>` 
-                    : `<span class="badge-onsite">Onsite</span>`;
+                const badge = data.source === 'Online' ? `<span class="badge-online">Online</span>` : `<span class="badge-onsite">Onsite</span>`;
+                const basicRow = document.createElement("tr");
+                basicRow.innerHTML = `<td>${badge}</td><td>${data.date}</td><td>${data.controlNo}</td><td>${data.clientType}</td><td>${data.sectionUnit}</td><td><strong>${data.refCode}</strong></td><td style="color:#16a34a;font-weight:bold;">${avg}</td><td>${data.remarks || "-"}</td>`;
+                masterBody.appendChild(basicRow);
 
-                // HTML for the columns (7 columns total for consolidators)
-                const specificColumnsHTML = `
-                    <td>${data.date}</td>
-                    <td>${data.controlNo}</td>
-                    <td>${data.clientType}</td>
-                    <td>${data.sectionUnit}</td>
-                    <td><strong>${data.refCode}</strong></td>
-                    <td style="color:#16a34a; font-weight:bold;">${avg}</td>
-                    <td>${data.remarks || "-"}</td>
-                `;
-
-                // 1. Populate Master Table (Includes the Source Badge)
-                const masterRow = document.createElement("tr");
-                masterRow.innerHTML = `<td>${sourceBadge}</td>` + specificColumnsHTML;
-                masterBody.appendChild(masterRow);
-
-                // 2. Distribute to Onsite or Online Consolidators automatically
-                const specificRow = document.createElement("tr");
-                specificRow.innerHTML = specificColumnsHTML;
-
+                const tallyRowHTML = buildTallyRow(data);
+                const tallyRow = document.createElement("tr");
+                tallyRow.innerHTML = tallyRowHTML;
+                
                 if (data.source === "Onsite") {
-                    onsiteBody.appendChild(specificRow);
+                    onsiteTally.appendChild(tallyRow);
                 } else if (data.source === "Online") {
-                    onlineBody.appendChild(specificRow);
+                    onlineTally.appendChild(tallyRow);
                 }
             });
         });
         
-        // Auto-set today's date on load
         document.getElementById('date').valueAsDate = new Date();
     </script>
 </body>
