@@ -533,13 +533,11 @@
             const sqdCounts = {}; for(let i=0; i<=8; i++) sqdCounts[i] = { SA:0, A:0, N:0, D:0, SD:0, NA:0 };
             let totalOverallSA_A = 0; let totalOverallValidResp = 0;
 
-            // Demographics & CC Counters
             const ctCounts = { "Citizen": 0, "Government": 0, "Business": 0, "Did Not Specify": 0 };
             const sexCounts = { "Male": 0, "Female": 0, "Did not Specify": 0 };
             const ageCounts = { "19 or Lower": 0, "20-34": 0, "35-49": 0, "50-64": 0, "65 or higher": 0, "DID NOT SPECIFY": 0 };
             const ccTally = { cc1: { '1':0, '2':0, '3':0, '4':0 }, cc2: { '1':0, '2':0, '3':0, '4':0, '5':0 }, cc3: { '1':0, '2':0, '3':0, '4':0 } };
 
-            // Initialize Services Master Tally (Every single service starts at 0)
             const refCounts = {};
             servicesData.forEach(group => { group.items.forEach(item => { refCounts[item.ref] = 0; }); });
 
@@ -553,10 +551,9 @@
                 if(sexCounts[data.sex] !== undefined) sexCounts[data.sex]++;
                 if(ageCounts[data.age] !== undefined) ageCounts[data.age]++;
                 
-                // Track services by unique Ref Code
                 if(data.refCode) {
                     if (refCounts[data.refCode] !== undefined) refCounts[data.refCode]++;
-                    else refCounts[data.refCode] = 1; // Catch-all for legacy data
+                    else refCounts[data.refCode] = 1; 
                 }
 
                 if (['1','2','3'].includes(data.cc.cc1)) ccAwareCount++;
@@ -627,7 +624,6 @@
             document.getElementById('sexTallyBody').innerHTML = Object.entries(sexCounts).map(([k,v]) => `<tr><td>${k}</td><td style="font-weight:bold;text-align:right;">${v}</td></tr>`).join('');
             document.getElementById('ageTallyBody').innerHTML = Object.entries(ageCounts).map(([k,v]) => `<tr><td>${k}</td><td style="font-weight:bold;text-align:right;">${v}</td></tr>`).join('');
             
-            // BUILD FULL MASTER SERVICES INVENTORY HTML
             let svcMasterHtml = "";
             servicesData.forEach(group => {
                 svcMasterHtml += `<tr style="background-color: #e2e8f0;"><td colspan="3" style="font-weight: bold; text-align: left;">${group.group}</td></tr>`;
@@ -645,12 +641,33 @@
             `;
 
             let masterSqdHtml = "";
+            let grandSA=0, grandA=0, grandN=0, grandD=0, grandSD=0, grandNA=0;
+
             for(let i=0; i<=8; i++) {
                 const c = sqdCounts[i]; const validResp = totalResp - c.NA;
                 const score = validResp > 0 ? (((c.SA + c.A) / validResp) * 100).toFixed(2) : 0;
                 let ratingText = i===0 ? "-" : `${score}% (${getInterpretation(score)})`;
+                
+                grandSA += c.SA; grandA += c.A; grandN += c.N; 
+                grandD += c.D; grandSD += c.SD; grandNA += c.NA;
+
                 masterSqdHtml += `<tr><td style="text-align:left; font-weight:bold;">${sqdNames[i]}</td><td>${c.SA}</td><td>${c.A}</td><td>${c.N}</td><td>${c.D}</td><td>${c.SD}</td><td style="color:#64748b;">${c.NA}</td><td style="background:#f1f5f9; font-weight:bold; color: #10b981;">${ratingText}</td></tr>`;
             }
+            
+            // --- ADDED TOTAL ROW ---
+            masterSqdHtml += `
+                <tr style="background:#e2e8f0; border-top: 2px solid var(--border);">
+                    <td style="text-align:left; font-weight:bold; font-size: 14px;">TOTAL</td>
+                    <td style="font-weight:bold;">${grandSA}</td>
+                    <td style="font-weight:bold;">${grandA}</td>
+                    <td style="font-weight:bold;">${grandN}</td>
+                    <td style="font-weight:bold;">${grandD}</td>
+                    <td style="font-weight:bold;">${grandSD}</td>
+                    <td style="font-weight:bold; color:#64748b;">${grandNA}</td>
+                    <td style="font-weight:bold; color: #16a34a; font-size: 14px;">${overallScore}% (${getInterpretation(overallScore)})</td>
+                </tr>
+            `;
+
             document.getElementById('sqdMasterTallyBody').innerHTML = masterSqdHtml;
             
             let subHtml = ""; let goodHtml = "";
