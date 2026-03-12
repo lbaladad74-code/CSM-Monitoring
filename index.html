@@ -186,7 +186,8 @@
 
             <div class="card" style="background-color: #e2e8f0; margin-top: 20px;">
                 <label>Total Transactions in 2024 (For Response Rate calc)</label>
-                <div style="display: flex; gap: 10px; max-width: 300px;"><input type="number" id="totalTransactionsInput" value="100"></div>
+                <!-- Added oninput to recalculate interactively -->
+                <div style="display: flex; gap: 10px; max-width: 300px;"><input type="number" id="totalTransactionsInput" value="100" oninput="window.generateReport()"></div>
             </div>
             
             <div class="grid-4">
@@ -320,6 +321,13 @@
             document.querySelectorAll('.nav-links li').forEach(el => el.classList.remove('active-nav'));
             document.getElementById(tabId).classList.add('active-section');
             document.getElementById('nav-' + tabId).classList.add('active-nav');
+
+            // Force charts to resize when switching back to dashboard to avoid rendering issues
+            if (tabId === 'dashboard') {
+                if(divisionChart) divisionChart.resize();
+                if(sourceChart) sourceChart.resize();
+                if(clientChart) clientChart.resize();
+            }
         };
 
         const servicesData = [
@@ -414,9 +422,10 @@
         document.getElementById('onsiteTableContainer').innerHTML = generateMegaTableHTML('onsiteTallyBody');
         document.getElementById('onlineTableContainer').innerHTML = generateMegaTableHTML('onlineTallyBody');
 
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+        // Note: Using 11.6.1 as 12.10.0 does not exist and throws network errors
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, deleteDoc, updateDoc } 
-        from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+        from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyA9WsRovhzkLjT27DxoK7R4wzh-Ou4FxZY",
@@ -660,13 +669,8 @@
             sqdDetailedHtml += `<tr style="border-top: 2px solid var(--border);"><td style="font-weight:bold;">Overall (SQD)</td><td style="text-align:center; font-weight:bold;">${grandSA}</td><td style="text-align:center; font-weight:bold;">${grandA}</td><td style="text-align:center; font-weight:bold;">${grandN}</td><td style="text-align:center; font-weight:bold;">${grandD}</td><td style="text-align:center; font-weight:bold;">${grandSD}</td><td style="text-align:center; font-weight:bold;">${grandNA}</td><td style="text-align:center; background:#e2e8f0; font-weight:bold;">${totalResp * 8}</td><td style="text-align:center; font-weight:bold; color: #16a34a; background:#dbeafe;">${overallScore}</td></tr>`;
             document.getElementById('sqdAnalysisBody').innerHTML = sqdDetailedHtml;
             
-            let basicHtml = "";
-            for(let i=1; i<=8; i++) {
-                const c = sqdCounts[i]; const validResp = totalResp - c.NA;
-                const score = validResp > 0 ? (((c.SA + c.A) / validResp) * 100).toFixed(2) : 0;
-                basicHtml += `<tr><td><strong>${sqdNamesArr[i]}</strong></td><td style="text-align:center;">${c.SA}</td><td style="text-align:center;">${c.A}</td><td style="text-align:center;">${c.N}</td><td style="text-align:center;">${c.D}</td><td style="text-align:center;">${c.SD}</td><td style="text-align:center;">${c.NA}</td><td style="text-align:center; font-weight:bold; color: #16a34a; background:#f1f5f9;">${score}%</td><td style="text-align:center; background:#f1f5f9;">${getInterpretation(score)}</td></tr>`;
-            }
-            document.getElementById('sqdReportBody').innerHTML = basicHtml;
+            // FIX IMPLEMENTED HERE: Removed injection to 'sqdReportBody' because it does not exist in your HTML.
+            // This was causing the fatal JS crash. The data is properly handled by sqdAnalysisBody above instead.
 
             document.getElementById('ctTallyBody').innerHTML = Object.entries(ctCounts).map(([k,v]) => `<tr><td>${k}</td><td style="font-weight:bold;text-align:right;">${v}</td></tr>`).join('');
             document.getElementById('sexTallyBody').innerHTML = Object.entries(sexCounts).map(([k,v]) => `<tr><td>${k}</td><td style="font-weight:bold;text-align:right;">${v}</td></tr>`).join('');
