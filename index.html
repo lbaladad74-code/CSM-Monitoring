@@ -658,15 +658,13 @@
                 <tr><td>4. No Response</td><td style="text-align:center;">${ccTally.cc3['4'] + ccTally.cc3['NR']}</td><td style="text-align:center;">${calcPct(ccTally.cc3['4'] + ccTally.cc3['NR'])}%</td></tr>
             `;
 
-            let sqdDetailedHtml = ""; let grandSA=0, grandA=0, grandN=0, grandD=0, grandSD=0, grandNA=0;
+            let sqdDetailedHtml = "";
             for(let i=0; i<=8; i++) {
                 const c = sqdCounts[i]; const validResp = totalResp - c.NA;
                 const score = validResp > 0 ? (((c.SA + c.A) / validResp) * 100).toFixed(2) : 0;
-                if (i > 0) { grandSA += c.SA; grandA += c.A; grandN += c.N; grandD += c.D; grandSD += c.SD; grandNA += c.NA; }
                 const rowLabel = i === 0 ? "SQD0" : `${i}-${sqdNamesArr[i].replace("SQD" + i + " ", "").replace(/\(|\)/g, '')}`;
                 sqdDetailedHtml += `<tr><td><strong>${rowLabel}</strong></td><td style="text-align:center;">${c.SA}</td><td style="text-align:center;">${c.A}</td><td style="text-align:center;">${c.N}</td><td style="text-align:center;">${c.D}</td><td style="text-align:center;">${c.SD}</td><td style="text-align:center;">${c.NA}</td><td style="text-align:center; background:#e2e8f0;">${totalResp}</td><td style="text-align:center; font-weight:bold; color: #16a34a; background:#dbeafe;">${i===0 ? score + "%" : score}</td></tr>`;
             }
-            sqdDetailedHtml += `<tr style="border-top: 2px solid var(--border);"><td style="font-weight:bold;">Overall (SQD)</td><td style="text-align:center; font-weight:bold;">${grandSA}</td><td style="text-align:center; font-weight:bold;">${grandA}</td><td style="text-align:center; font-weight:bold;">${grandN}</td><td style="text-align:center; font-weight:bold;">${grandD}</td><td style="text-align:center; font-weight:bold;">${grandSD}</td><td style="text-align:center; font-weight:bold;">${grandNA}</td><td style="text-align:center; background:#e2e8f0; font-weight:bold;">${totalResp * 8}</td><td style="text-align:center; font-weight:bold; color: #16a34a; background:#dbeafe;">${overallScore}</td></tr>`;
             document.getElementById('sqdAnalysisBody').innerHTML = sqdDetailedHtml;
             
             // FIX IMPLEMENTED HERE: Removed injection to 'sqdReportBody' because it does not exist in your HTML.
