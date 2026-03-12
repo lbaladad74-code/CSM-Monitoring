@@ -188,13 +188,12 @@
             
             <div class="card" style="background-color: #f8fafc; border: 2px solid var(--primary);">
                 <h2 style="margin-top:0; color: var(--primary);">Generate Official Document (RO-ORD-F-020)</h2>
-                <p style="font-size: 13px; color: #64748b; margin-top: -10px;">Select a division to calculate its specific averages and generate the official printable/downloadable Word document template.</p>
                 <div style="display: flex; gap: 15px; align-items: flex-end;">
                     <div style="flex: 1;">
                         <label>Select Functional Division</label>
                         <select id="reportDivisionSelect" onchange="updateOfficialReport()" style="border-color: var(--primary); border-width: 2px;">
                             <option value="ALL">All Functional Divisions (Regional Summary)</option>
-                            </select>
+                        </select>
                     </div>
                     <button onclick="printReport()" style="width: auto; background-color: #10b981; font-size: 14px;">🖨️ Print Document</button>
                     <button onclick="downloadDocx()" style="width: auto; background-color: #2563eb; font-size: 14px;">📄 Download .docx</button>
@@ -212,11 +211,35 @@
                 <div class="metric-card" style="border-top: 4px solid #f59e0b;"><h3>CC Awareness</h3><h2 id="repCcAwareness">0%</h2></div>
                 <div class="metric-card" style="border-top: 4px solid #8b5cf6;"><h3>CC Helpfulness</h3><h2 id="repCcHelpfulness">0%</h2></div>
             </div>
+
+            <div class="section-divider"></div>
+            <h2>Detailed Statistical Analysis (Based on ARTA Guidelines)</h2>
+
             <div class="card table-wrapper">
-                <h3>System-Wide Service Quality Dimensions (SQD) Breakdown</h3>
+                <h3 style="margin-top:0;">Citizen's Charter (CC) Analysis</h3>
                 <table class="basic-table">
-                    <thead><tr><th>Dimension</th><th>SA</th><th>A</th><th>N</th><th>D</th><th>SD</th><th>N/A</th><th style="background:#f1f5f9;">Score (%)</th><th style="background:#f1f5f9;">Interpretation</th></tr></thead>
-                    <tbody id="sqdReportBody"></tbody>
+                    <thead><tr><th>SERVICE</th><th style="text-align: center;">Responses</th><th style="text-align: center;">Percentage</th></tr></thead>
+                    <tbody id="ccAnalysisBody"></tbody>
+                </table>
+            </div>
+
+            <div class="card table-wrapper">
+                <h3 style="margin-top:0;">Service Quality Dimensions (SQD) Analysis</h3>
+                <table class="basic-table">
+                    <thead>
+                        <tr>
+                            <th>Service Quality Dimensions</th>
+                            <th style="text-align:center;">Strongly Agree</th>
+                            <th style="text-align:center;">Agree</th>
+                            <th style="text-align:center;">Neither Agree or Disagree</th>
+                            <th style="text-align:center;">Disagree</th>
+                            <th style="text-align:center;">Strongly Disagree</th>
+                            <th style="text-align:center;">No Response</th>
+                            <th style="text-align:center; background:#e2e8f0;">Total Responses</th>
+                            <th style="text-align:center; background:#dbeafe; font-weight:bold;">Overall</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sqdAnalysisBody"></tbody>
                 </table>
             </div>
 
@@ -226,60 +249,21 @@
                     <h2 style="text-align: center; font-size: 14pt; margin-top: 0;">Fiscal Year (FY) 2024</h2>
                     <br>
                     <h3 id="docDivName" style="text-transform: uppercase; font-size: 12pt; margin-bottom: 5px;">ADMINISTRATIVE DIVISION- PERSONNEL SECTION</h3>
-                    
                     <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;" border="1">
-                        <thead>
-                            <tr>
-                                <th style="padding: 5px; text-align: left;">External and Internal Services</th>
-                                <th style="padding: 5px; text-align: center; width: 100px;">Score</th>
-                            </tr>
-                        </thead>
-                        <tbody id="docServicesBody">
-                            </tbody>
+                        <thead><tr><th style="padding: 5px; text-align: left;">External and Internal Services</th><th style="padding: 5px; text-align: center; width: 100px;">Score</th></tr></thead>
+                        <tbody id="docServicesBody"></tbody>
                     </table>
-
                     <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;" border="1">
-                        <thead>
-                            <tr><th colspan="2" style="padding: 5px; text-align: left;">OVERALL RATING</th></tr>
-                        </thead>
-                        <tbody id="docSqdBody">
-                            </tbody>
+                        <thead><tr><th colspan="2" style="padding: 5px; text-align: left;">OVERALL RATING</th></tr></thead>
+                        <tbody id="docSqdBody"></tbody>
                     </table>
-
                     <p style="margin-bottom: 5px;"><strong>Total Number of CSM Respondents,</strong> <span id="docTotalResp" style="margin-left: 10px;">0</span></p>
-                    
                     <p style="margin-bottom: 5px;"><strong>Client’s Feedback:</strong></p>
-                    <ul id="docFeedbackList" style="margin-top: 0; padding-left: 20px;">
-                        </ul>
-
+                    <ul id="docFeedbackList" style="margin-top: 0; padding-left: 20px;"></ul>
                     <br><br>
                     <table style="width: 100%; border: none; text-align: center; margin-top: 40px;">
-                        <tr>
-                            <td style="width: 50%; padding: 10px; vertical-align: top;">
-                                Prepared by:<br><br><br>
-                                <strong>JOANNA D. SABADO</strong><br>
-                                Project Development Officer II
-                            </td>
-                            <td style="width: 50%; padding: 10px; vertical-align: top;">
-                                Verified by:<br><br><br>
-                                <strong>CECILIA P. ROSIDO</strong><br>
-                                Chief Education Supervisor<br>
-                                Lead, Risk Management Team
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="width: 50%; padding-top: 40px; vertical-align: top;">
-                                Recommending Approval:<br><br><br>
-                                <strong>RHODA T. RAZON</strong><br>
-                                Director III<br>
-                                Quality Management Representative
-                            </td>
-                            <td style="width: 50%; padding-top: 40px; vertical-align: top;">
-                                APPROVED:<br><br><br>
-                                <strong>TOLENTINO G. AQUINO</strong><br>
-                                Director IV
-                            </td>
-                        </tr>
+                        <tr><td style="width: 50%; padding: 10px; vertical-align: top;">Prepared by:<br><br><br><strong>JOANNA D. SABADO</strong><br>Project Development Officer II</td><td style="width: 50%; padding: 10px; vertical-align: top;">Verified by:<br><br><br><strong>CECILIA P. ROSIDO</strong><br>Chief Education Supervisor<br>Lead, Risk Management Team</td></tr>
+                        <tr><td style="width: 50%; padding-top: 40px; vertical-align: top;">Recommending Approval:<br><br><br><strong>RHODA T. RAZON</strong><br>Director III<br>Quality Management Representative</td><td style="width: 50%; padding-top: 40px; vertical-align: top;">APPROVED:<br><br><br><strong>TOLENTINO G. AQUINO</strong><br>Director IV</td></tr>
                     </table>
                 </div>
             </div>
@@ -294,24 +278,6 @@
                 <div class="card" style="padding: 0; overflow: hidden;"><div class="summary-card-header">Age Bracket Tally</div><table class="basic-table" style="border:none;"><tbody id="ageTallyBody"></tbody></table></div>
             </div>
 
-            <div class="card table-wrapper" style="padding: 0; overflow: hidden;">
-                <div class="summary-card-header">Citizen's Charter (CC) Tally</div>
-                <table class="basic-table" style="border:none; text-align: center;">
-                    <thead><tr><th style="text-align:left;">Question</th><th>Opt 1</th><th>Opt 2</th><th>Opt 3</th><th>Opt 4</th><th>Opt 5</th></tr></thead>
-                    <tbody id="ccTallyBody"></tbody>
-                </table>
-            </div>
-
-            <div class="card table-wrapper" style="padding: 0; overflow: hidden;">
-                <div class="summary-card-header" style="background:#10b981; color:white;">No. per SQD & Overall Rating</div>
-                <table class="basic-table" style="border:none; text-align: center;">
-                    <thead><tr><th style="text-align:left;">Dimension</th><th>Strongly Agree</th><th>Agree</th><th>Neither</th><th>Disagree</th><th>Strongly Disagree</th><th>N/A</th><th style="background:#f1f5f9; font-weight:bold;">Overall Rating (Score)</th></tr></thead>
-                    <tbody id="sqdMasterTallyBody"></tbody>
-                </table>
-            </div>
-
-            <div class="section-divider"></div>
-
             <div class="card table-wrapper" style="padding: 0; max-height: 500px; overflow-y: auto;">
                 <div class="summary-card-header" style="position: sticky; top: 0; z-index: 10; background: #0f172a; color: white;">Master Inventory: No. of Clients per Service</div>
                 <table class="basic-table" style="border:none;">
@@ -322,7 +288,6 @@
 
             <div class="card table-wrapper">
                 <h3 style="margin-top: 0; color: #0f172a;">Total CSM Submissions per Quarter</h3>
-                <p style="font-size: 13px; color: #64748b; margin-top: -5px;">Count of all forms received by division.</p>
                 <table class="basic-table">
                     <thead><tr><th>Functional Division</th><th style="text-align:center;">Q1 (Jan-Mar)</th><th style="text-align:center;">Q2 (Apr-Jun)</th><th style="text-align:center;">Q3 (Jul-Sep)</th><th style="text-align:center;">Q4 (Oct-Dec)</th><th style="text-align:center; background:#f1f5f9;">TOTAL</th></tr></thead>
                     <tbody id="subQuarterlyBody"></tbody>
@@ -331,7 +296,6 @@
 
             <div class="card table-wrapper">
                 <h3 style="margin-top: 0; color: #16a34a;">Total Good Comments per Quarter</h3>
-                <p style="font-size: 13px; color: #64748b; margin-top: -5px;">Count of forms with an Average SQD of 4.00 (80%) or higher AND containing written remarks.</p>
                 <table class="basic-table">
                     <thead><tr><th>Functional Division</th><th style="text-align:center;">Q1 (Jan-Mar)</th><th style="text-align:center;">Q2 (Apr-Jun)</th><th style="text-align:center;">Q3 (Jul-Sep)</th><th style="text-align:center;">Q4 (Oct-Dec)</th><th style="text-align:center; background:#f1f5f9;">TOTAL</th></tr></thead>
                     <tbody id="goodQuarterlyBody"></tbody>
@@ -387,12 +351,10 @@
             const docSectionSelect = document.getElementById('reportDivisionSelect');
             
             servicesData.forEach(group => {
-                // Populate Master Data Dropdown
                 const option = document.createElement('option');
                 option.value = group.group; option.textContent = group.group;
                 sectionSelect.appendChild(option);
                 
-                // Populate Document Generator Dropdown
                 const docOpt = document.createElement('option');
                 docOpt.value = group.group; docOpt.textContent = group.group;
                 docSectionSelect.appendChild(docOpt);
@@ -439,7 +401,6 @@
         document.getElementById('onsiteTableContainer').innerHTML = generateMegaTableHTML('onsiteTallyBody');
         document.getElementById('onlineTableContainer').innerHTML = generateMegaTableHTML('onlineTallyBody');
 
-        // --- FIREBASE SETUP ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, deleteDoc, updateDoc } 
         from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
@@ -575,7 +536,6 @@
             return "Poor";
         }
 
-        // --- NEW: GENERATE OFFICIAL RO-ORD-F-020 DOCUMENT DATA ---
         window.updateOfficialReport = function() {
             const divName = document.getElementById('reportDivisionSelect').value;
             let filteredData = globalCsmData;
@@ -640,7 +600,6 @@
             document.getElementById('docFeedbackList').innerHTML = feedbackHtml;
         };
 
-        // --- PRINT AND DOWNLOAD LOGIC ---
         window.printReport = function() {
             const printContent = document.getElementById('printableReport').innerHTML;
             const printWindow = window.open('', '', 'height=800,width=800');
@@ -657,16 +616,13 @@
             const header = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export HTML To Doc</title></head><body>";
             const footer = "</body></html>";
             const html = header + document.getElementById('printableReport').innerHTML + footer;
-            
             const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
             const url = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(html);
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            
             const divName = document.getElementById('reportDivisionSelect').value;
             const safeName = divName === "ALL" ? "Regional_Summary" : divName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
             link.download = `CSM_Report_${safeName}.doc`;
-            
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -679,7 +635,7 @@
             document.getElementById('repResponseRate').innerText = `${totalTrans > 0 ? ((totalResp / totalTrans) * 100).toFixed(2) : 0}%`;
 
             if (totalResp === 0) {
-                window.updateOfficialReport(); // Update even if 0
+                window.updateOfficialReport(); 
                 return;
             }
             
@@ -690,7 +646,7 @@
             const ctCounts = { "Citizen": 0, "Government": 0, "Business": 0, "Did Not Specify": 0 };
             const sexCounts = { "Male": 0, "Female": 0, "Did not Specify": 0 };
             const ageCounts = { "19 or Lower": 0, "20-34": 0, "35-49": 0, "50-64": 0, "65 or higher": 0, "DID NOT SPECIFY": 0 };
-            const ccTally = { cc1: { '1':0, '2':0, '3':0, '4':0 }, cc2: { '1':0, '2':0, '3':0, '4':0, '5':0 }, cc3: { '1':0, '2':0, '3':0, '4':0 } };
+            const ccTally = { cc1: { '1':0, '2':0, '3':0, '4':0, 'NR':0 }, cc2: { '1':0, '2':0, '3':0, '4':0, '5':0, 'NR':0 }, cc3: { '1':0, '2':0, '3':0, '4':0, 'NR':0 } };
 
             const refCounts = {};
             servicesData.forEach(group => { group.items.forEach(item => { refCounts[item.ref] = 0; }); });
@@ -713,9 +669,10 @@
                 if (['1','2','3'].includes(data.cc.cc1)) ccAwareCount++;
                 if (data.cc.cc3 === '1') ccHelpfulCount++;
                 
-                if(ccTally.cc1[data.cc.cc1] !== undefined) ccTally.cc1[data.cc.cc1]++;
-                if(ccTally.cc2[data.cc.cc2] !== undefined) ccTally.cc2[data.cc.cc2]++;
-                if(ccTally.cc3[data.cc.cc3] !== undefined) ccTally.cc3[data.cc.cc3]++;
+                // Detailed CC Tallies (If empty/N/A, tally as 'NR')
+                if(data.cc.cc1 && ccTally.cc1[data.cc.cc1] !== undefined) ccTally.cc1[data.cc.cc1]++; else ccTally.cc1['NR']++;
+                if(data.cc.cc2 && ccTally.cc2[data.cc.cc2] !== undefined) ccTally.cc2[data.cc.cc2]++; else ccTally.cc2['NR']++;
+                if(data.cc.cc3 && ccTally.cc3[data.cc.cc3] !== undefined) ccTally.cc3[data.cc.cc3]++; else ccTally.cc3['NR']++;
                 
                 let tempTotalSqd = 0; let tempValidSqd = 0;
 
@@ -726,7 +683,7 @@
                     else if (val === "NEITHER AGREE OR DISAGREE") sqdCounts[i].N++;
                     else if (val === "DISAGREE") sqdCounts[i].D++;
                     else if (val === "STRONGLY DISAGREE") sqdCounts[i].SD++;
-                    else if (val === "N/A") sqdCounts[i].NA++;
+                    else if (val === "N/A" || !val) sqdCounts[i].NA++; 
                     
                     if (i>0 && val !== "N/A" && val) {
                         totalOverallValidResp++;
@@ -759,20 +716,100 @@
 
             document.getElementById('repCcAwareness').innerText = `${((ccAwareCount / totalResp) * 100).toFixed(2)}%`;
             document.getElementById('repCcHelpfulness').innerText = `${((ccHelpfulCount / totalResp) * 100).toFixed(2)}%`;
+            
+            // Strictly Using provided formula: (SA + A) / (Total - NA) * 100 
             const overallScore = totalOverallValidResp > 0 ? ((totalOverallSA_A / totalOverallValidResp) * 100).toFixed(2) : 0;
             document.getElementById('repOverallScore').innerText = `${overallScore}%`;
             document.getElementById('repInterpretation').innerText = getInterpretation(overallScore);
             document.getElementById('dashOverallScore').innerText = `${overallScore}%`;
 
-            const sqdNames = ["SQD0", "SQD1 (Responsiveness)", "SQD2 (Reliability)", "SQD3 (Access & Facilities)", "SQD4 (Communication)", "SQD5 (Costs)", "SQD6 (Integrity)", "SQD7 (Assurance)", "SQD8 (Outcome)"];
-            let tableHTML = "";
+            const sqdNamesFull = ["SQD0", "SQD1 (Responsiveness)", "SQD2 (Reliability)", "SQD3 (Access & Facilities)", "SQD4 (Communication)", "SQD5 (Costs)", "SQD6 (Integrity)", "SQD7 (Assurance)", "SQD8 (Outcome)"];
+            
+            // --- DETAILED ARTA ANALYSIS BUILDER ---
+
+            // 1. CC Analysis Breakdown
+            const calcPct = (count) => totalResp > 0 ? ((count / totalResp) * 100).toFixed(2) : "0.00";
+            
+            let ccAnalysisHtml = `
+                <tr><td colspan="3" style="background:#e2e8f0; font-weight:bold;">CC1. Which of the following describes your awareness of the CC?</td></tr>
+                <tr><td>1. I know what a CC is and I saw this office's CC</td><td style="text-align:center;">${ccTally.cc1['1']}</td><td style="text-align:center;">${calcPct(ccTally.cc1['1'])}%</td></tr>
+                <tr><td>2. I know what a CC is but I did not see this office's CC</td><td style="text-align:center;">${ccTally.cc1['2']}</td><td style="text-align:center;">${calcPct(ccTally.cc1['2'])}%</td></tr>
+                <tr><td>3. I learned of the CC only when I saw this office's CC</td><td style="text-align:center;">${ccTally.cc1['3']}</td><td style="text-align:center;">${calcPct(ccTally.cc1['3'])}%</td></tr>
+                <tr><td>4. I do not know what a CC is and I did not see this office's CC</td><td style="text-align:center;">${ccTally.cc1['4']}</td><td style="text-align:center;">${calcPct(ccTally.cc1['4'])}%</td></tr>
+                <tr><td>5. No Response</td><td style="text-align:center;">${ccTally.cc1['NR']}</td><td style="text-align:center;">${calcPct(ccTally.cc1['NR'])}%</td></tr>
+                
+                <tr><td colspan="3" style="background:#e2e8f0; font-weight:bold;">CC2. If aware of CC, would you say that the CC of this office was ...?</td></tr>
+                <tr><td>1. Easy to see</td><td style="text-align:center;">${ccTally.cc2['1']}</td><td style="text-align:center;">${calcPct(ccTally.cc2['1'])}%</td></tr>
+                <tr><td>2. Somewhat easy to see</td><td style="text-align:center;">${ccTally.cc2['2']}</td><td style="text-align:center;">${calcPct(ccTally.cc2['2'])}%</td></tr>
+                <tr><td>3. Difficult to see</td><td style="text-align:center;">${ccTally.cc2['3']}</td><td style="text-align:center;">${calcPct(ccTally.cc2['3'])}%</td></tr>
+                <tr><td>4. Not visible at all</td><td style="text-align:center;">${ccTally.cc2['4']}</td><td style="text-align:center;">${calcPct(ccTally.cc2['4'])}%</td></tr>
+                <tr><td>5. No Response</td><td style="text-align:center;">${ccTally.cc2['5'] + ccTally.cc2['NR']}</td><td style="text-align:center;">${calcPct(ccTally.cc2['5'] + ccTally.cc2['NR'])}%</td></tr>
+
+                <tr><td colspan="3" style="background:#e2e8f0; font-weight:bold;">CC3. If aware of CC, how much did the CC help you in your transaction?</td></tr>
+                <tr><td>1. Helped very much</td><td style="text-align:center;">${ccTally.cc3['1']}</td><td style="text-align:center;">${calcPct(ccTally.cc3['1'])}%</td></tr>
+                <tr><td>2. Somewhat helped</td><td style="text-align:center;">${ccTally.cc3['2']}</td><td style="text-align:center;">${calcPct(ccTally.cc3['2'])}%</td></tr>
+                <tr><td>3. Did not help</td><td style="text-align:center;">${ccTally.cc3['3']}</td><td style="text-align:center;">${calcPct(ccTally.cc3['3'])}%</td></tr>
+                <tr><td>4. No Response</td><td style="text-align:center;">${ccTally.cc3['4'] + ccTally.cc3['NR']}</td><td style="text-align:center;">${calcPct(ccTally.cc3['4'] + ccTally.cc3['NR'])}%</td></tr>
+            `;
+            document.getElementById('ccAnalysisBody').innerHTML = ccAnalysisHtml;
+
+            // 2. SQD Detailed Breakdown (SQD0 and SQD1-8 grouped with overall formulas)
+            let sqdDetailedHtml = "";
+            let grandSA=0, grandA=0, grandN=0, grandD=0, grandSD=0, grandNA=0;
+            
+            // Build Rows 0 to 8
+            for(let i=0; i<=8; i++) {
+                const c = sqdCounts[i]; 
+                const validResp = totalResp - c.NA;
+                const score = validResp > 0 ? (((c.SA + c.A) / validResp) * 100).toFixed(2) : 0;
+                
+                if (i > 0) {
+                    grandSA += c.SA; grandA += c.A; grandN += c.N; 
+                    grandD += c.D; grandSD += c.SD; grandNA += c.NA;
+                }
+
+                sqdDetailedHtml += `
+                    <tr>
+                        <td><strong>${i===0 ? "SQD0" : (i + "-" + sqdNamesFull[i].split(" ")[1].replace(/\(|\)/g, ''))}</strong></td>
+                        <td style="text-align:center;">${c.SA}</td>
+                        <td style="text-align:center;">${c.A}</td>
+                        <td style="text-align:center;">${c.N}</td>
+                        <td style="text-align:center;">${c.D}</td>
+                        <td style="text-align:center;">${c.SD}</td>
+                        <td style="text-align:center;">${c.NA}</td>
+                        <td style="text-align:center; background:#e2e8f0;">${totalResp}</td>
+                        <td style="text-align:center; font-weight:bold; color: #16a34a; background:#dbeafe;">${i===0 ? score + "%" : score}</td>
+                    </tr>
+                `;
+            }
+            
+            // Final SQD Overall Row (Matching Image Template strictly)
+            sqdDetailedHtml += `
+                <tr style="border-top: 2px solid var(--border);">
+                    <td style="font-weight:bold;">Overall (SQD)</td>
+                    <td style="text-align:center; font-weight:bold;">${grandSA}</td>
+                    <td style="text-align:center; font-weight:bold;">${grandA}</td>
+                    <td style="text-align:center; font-weight:bold;">${grandN}</td>
+                    <td style="text-align:center; font-weight:bold;">${grandD}</td>
+                    <td style="text-align:center; font-weight:bold;">${grandSD}</td>
+                    <td style="text-align:center; font-weight:bold;">${grandNA}</td>
+                    <td style="text-align:center; background:#e2e8f0; font-weight:bold;">${totalResp * 8}</td>
+                    <td style="text-align:center; font-weight:bold; color: #16a34a; background:#dbeafe;">${overallScore}</td>
+                </tr>
+            `;
+            document.getElementById('sqdAnalysisBody').innerHTML = sqdDetailedHtml;
+            
+            // Basic Summary Update for Top Report Chart (SQD 1-8 only for visual summary)
+            let basicHtml = "";
             for(let i=1; i<=8; i++) {
                 const c = sqdCounts[i]; const validResp = totalResp - c.NA;
                 const score = validResp > 0 ? (((c.SA + c.A) / validResp) * 100).toFixed(2) : 0;
-                tableHTML += `<tr><td><strong>${sqdNames[i]}</strong></td><td style="text-align:center;">${c.SA}</td><td style="text-align:center;">${c.A}</td><td style="text-align:center;">${c.N}</td><td style="text-align:center;">${c.D}</td><td style="text-align:center;">${c.SD}</td><td style="text-align:center;">${c.NA}</td><td style="text-align:center; font-weight:bold; color: #16a34a; background:#f1f5f9;">${score}%</td><td style="text-align:center; background:#f1f5f9;">${getInterpretation(score)}</td></tr>`;
+                basicHtml += `<tr><td><strong>${sqdNamesFull[i]}</strong></td><td style="text-align:center;">${c.SA}</td><td style="text-align:center;">${c.A}</td><td style="text-align:center;">${c.N}</td><td style="text-align:center;">${c.D}</td><td style="text-align:center;">${c.SD}</td><td style="text-align:center;">${c.NA}</td><td style="text-align:center; font-weight:bold; color: #16a34a; background:#f1f5f9;">${score}%</td><td style="text-align:center; background:#f1f5f9;">${getInterpretation(score)}</td></tr>`;
             }
-            document.getElementById('sqdReportBody').innerHTML = tableHTML;
+            document.getElementById('sqdReportBody').innerHTML = basicHtml;
 
+
+            // --- CONSOLIDATIONS TAB POPULATION ---
             document.getElementById('ctTallyBody').innerHTML = Object.entries(ctCounts).map(([k,v]) => `<tr><td>${k}</td><td style="font-weight:bold;text-align:right;">${v}</td></tr>`).join('');
             document.getElementById('sexTallyBody').innerHTML = Object.entries(sexCounts).map(([k,v]) => `<tr><td>${k}</td><td style="font-weight:bold;text-align:right;">${v}</td></tr>`).join('');
             document.getElementById('ageTallyBody').innerHTML = Object.entries(ageCounts).map(([k,v]) => `<tr><td>${k}</td><td style="font-weight:bold;text-align:right;">${v}</td></tr>`).join('');
@@ -787,28 +824,6 @@
             });
             document.getElementById('serviceMasterTallyBody').innerHTML = svcMasterHtml;
 
-            document.getElementById('ccTallyBody').innerHTML = `
-                <tr><td style="text-align:left;font-weight:bold;">CC1</td><td>${ccTally.cc1['1']}</td><td>${ccTally.cc1['2']}</td><td>${ccTally.cc1['3']}</td><td>${ccTally.cc1['4']}</td><td>-</td></tr>
-                <tr><td style="text-align:left;font-weight:bold;">CC2</td><td>${ccTally.cc2['1']}</td><td>${ccTally.cc2['2']}</td><td>${ccTally.cc2['3']}</td><td>${ccTally.cc2['4']}</td><td>${ccTally.cc2['5']}</td></tr>
-                <tr><td style="text-align:left;font-weight:bold;">CC3</td><td>${ccTally.cc3['1']}</td><td>${ccTally.cc3['2']}</td><td>${ccTally.cc3['3']}</td><td>${ccTally.cc3['4']}</td><td>-</td></tr>
-            `;
-
-            let masterSqdHtml = "";
-            let grandSA=0, grandA=0, grandN=0, grandD=0, grandSD=0, grandNA=0;
-
-            for(let i=0; i<=8; i++) {
-                const c = sqdCounts[i]; const validResp = totalResp - c.NA;
-                const score = validResp > 0 ? (((c.SA + c.A) / validResp) * 100).toFixed(2) : 0;
-                let ratingText = i===0 ? "-" : `${score}% (${getInterpretation(score)})`;
-                
-                grandSA += c.SA; grandA += c.A; grandN += c.N; 
-                grandD += c.D; grandSD += c.SD; grandNA += c.NA;
-
-                masterSqdHtml += `<tr><td style="text-align:left; font-weight:bold;">${sqdNames[i]}</td><td>${c.SA}</td><td>${c.A}</td><td>${c.N}</td><td>${c.D}</td><td>${c.SD}</td><td style="color:#64748b;">${c.NA}</td><td style="background:#f1f5f9; font-weight:bold; color: #10b981;">${ratingText}</td></tr>`;
-            }
-            masterSqdHtml += `<tr style="background:#e2e8f0; border-top: 2px solid var(--border);"><td style="text-align:left; font-weight:bold; font-size: 14px;">TOTAL</td><td style="font-weight:bold;">${grandSA}</td><td style="font-weight:bold;">${grandA}</td><td style="font-weight:bold;">${grandN}</td><td style="font-weight:bold;">${grandD}</td><td style="font-weight:bold;">${grandSD}</td><td style="font-weight:bold; color:#64748b;">${grandNA}</td><td style="font-weight:bold; color: #16a34a; font-size: 14px;">${overallScore}% (${getInterpretation(overallScore)})</td></tr>`;
-            document.getElementById('sqdMasterTallyBody').innerHTML = masterSqdHtml;
-            
             let subHtml = ""; let goodHtml = "";
             servicesData.forEach(group => {
                 const div = group.group; const s = divStats[div].subs; const g = divStats[div].goods;
@@ -819,7 +834,7 @@
             document.getElementById('goodQuarterlyBody').innerHTML = goodHtml;
 
             updateDashboardCharts();
-            window.updateOfficialReport(); // Sync the Document Output
+            window.updateOfficialReport();
         };
 
         function buildTallyRow(data, id) {
