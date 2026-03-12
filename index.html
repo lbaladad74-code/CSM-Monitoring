@@ -690,15 +690,13 @@
                 <tr><td style="text-align:left;font-weight:bold;">CC3</td><td>${ccTally.cc3['1']}</td><td>${ccTally.cc3['2']}</td><td>${ccTally.cc3['3']}</td><td>${ccTally.cc3['4']}</td><td>-</td></tr>
             `;
 
-            let masterSqdHtml = ""; let mGrandSA=0, mGrandA=0, mGrandN=0, mGrandD=0, mGrandSD=0, mGrandNA=0;
+            let masterSqdHtml = "";
             for(let i=0; i<=8; i++) {
                 const c = sqdCounts[i]; const validResp = totalResp - c.NA;
                 const score = validResp > 0 ? (((c.SA + c.A) / validResp) * 100).toFixed(2) : 0;
                 let ratingText = i===0 ? "-" : `${score}% (${getInterpretation(score)})`;
-                if (i>0){ mGrandSA += c.SA; mGrandA += c.A; mGrandN += c.N; mGrandD += c.D; mGrandSD += c.SD; mGrandNA += c.NA; }
                 masterSqdHtml += `<tr><td style="text-align:left; font-weight:bold;">${sqdNamesArr[i]}</td><td>${c.SA}</td><td>${c.A}</td><td>${c.N}</td><td>${c.D}</td><td>${c.SD}</td><td style="color:#64748b;">${c.NA}</td><td style="background:#f1f5f9; font-weight:bold; color: #10b981;">${ratingText}</td></tr>`;
             }
-            masterSqdHtml += `<tr style="background:#e2e8f0; border-top: 2px solid var(--border);"><td style="text-align:left; font-weight:bold; font-size: 14px;">TOTAL</td><td style="font-weight:bold;">${mGrandSA}</td><td style="font-weight:bold;">${mGrandA}</td><td style="font-weight:bold;">${mGrandN}</td><td style="font-weight:bold;">${mGrandD}</td><td style="font-weight:bold;">${mGrandSD}</td><td style="font-weight:bold; color:#64748b;">${mGrandNA}</td><td style="font-weight:bold; color: #16a34a; font-size: 14px;">${overallScore}% (${getInterpretation(overallScore)})</td></tr>`;
             document.getElementById('sqdMasterTallyBody').innerHTML = masterSqdHtml;
             
             let subHtml = ""; let goodHtml = "";
